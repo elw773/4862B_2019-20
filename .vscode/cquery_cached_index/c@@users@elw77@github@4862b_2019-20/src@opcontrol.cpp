@@ -51,15 +51,15 @@ int LIFT_DOWN = 100;
 
  		if(master.get_digital(DIGITAL_R1)){
  			if(master.get_digital(DIGITAL_R2)){
- 				intake1.move(127);
- 				intake2.move(127);
- 			}else{
  				intake1.move(40);
  				intake2.move(40);
+ 			}else{
+ 				intake1.move(127);
+ 				intake2.move(127);
  			}
  		} else if(master.get_digital(DIGITAL_R2)){
- 			intake1.move(-60);
- 			intake2.move(-60);
+ 			intake1.move(-70);
+ 			intake2.move(-70);
  		} else {
  			intake1.move(0);
  			intake2.move(0);

@@ -36,6 +36,9 @@
 
 #include "api.h"
 
+#include "MotorGroup.hpp"
+#include "Poller.hpp"
+
 /**
  * You should add more #includes here
  */
