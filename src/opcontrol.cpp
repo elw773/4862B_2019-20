@@ -24,7 +24,6 @@ int LIFT_DOWN = 100;
    pros::lcd::initialize();
 
    int left, right;
-
    pros::Motor left1(1, MOTOR_GEARSET_06, true);
    pros::Motor left2(2, MOTOR_GEARSET_06, false);
    pros::Motor right1(3,MOTOR_GEARSET_06, false);
@@ -52,15 +51,15 @@ int LIFT_DOWN = 100;
 
  		if(master.get_digital(DIGITAL_R1)){
  			if(master.get_digital(DIGITAL_R2)){
- 				intake1.move(-40);
- 				intake2.move(-40);
+ 				intake1.move(40);
+ 				intake2.move(40);
  			}else{
- 				intake1.move(100);
- 				intake2.move(100);
+ 				intake1.move(127);
+ 				intake2.move(127);
  			}
  		} else if(master.get_digital(DIGITAL_R2)){
- 			intake1.move(-100);
- 			intake2.move(-100);
+ 			intake1.move(-70);
+ 			intake2.move(-70);
  		} else {
  			intake1.move(0);
  			intake2.move(0);
@@ -104,7 +103,7 @@ int LIFT_DOWN = 100;
         break;
       case 2:
         tilter.move_absolute(TILT_UP, 25);
-        lift.move(-7);
+        lift.move(-15);
         break;
       case 3:
         tilt_goal = 2;
