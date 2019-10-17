@@ -2,7 +2,7 @@
 
 int TILT_DOWN = 200;
 int TILT_MID = 1000;
-int TILT_UP = 4300;
+int TILT_UP = 4400;
 
 int LIFT_DOWN = 100;
 
@@ -28,9 +28,9 @@ int LIFT_DOWN = 100;
    pros::Motor left2(2, MOTOR_GEARSET_06, false);
    pros::Motor right1(3,MOTOR_GEARSET_06, false);
    pros::Motor right2(4,MOTOR_GEARSET_06, true);
-   pros::Motor tilter(8, MOTOR_GEARSET_36, false);
+   pros::Motor tilter(9, MOTOR_GEARSET_36, false);
    pros::Motor lift(5, MOTOR_GEARSET_36, false);
-   pros::Motor intake1(6, MOTOR_GEARSET_18, false);
+   pros::Motor intake1(8, MOTOR_GEARSET_18, false);
    pros::Motor intake2(7, MOTOR_GEARSET_18, true);
 
   bool tilt_pressed = false;
@@ -95,14 +95,14 @@ int LIFT_DOWN = 100;
       case 0:
         tilter.move_absolute(0, 60);
         if(tilter.get_position() < TILT_DOWN){
-          tilter.move(0);
+          tilter.move(-1);
         }
         break;
       case 1:
         tilter.move_absolute(TILT_MID, 60);
         break;
       case 2:
-        tilter.move_absolute(TILT_UP, 25);
+        tilter.move_absolute(TILT_UP, 35);
         lift.move(-15);
         break;
       case 3:
