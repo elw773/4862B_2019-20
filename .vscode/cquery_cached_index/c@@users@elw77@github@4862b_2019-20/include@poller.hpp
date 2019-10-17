@@ -1,7 +1,7 @@
 #ifndef _POLLER_HPP_
 #define _POLLER_HPP_
 
-#include "main.h"
+#include "api.h"
 
 enum ActionState {
   STARTED = 0,
@@ -13,9 +13,11 @@ enum ActionState {
 };
 
 class Poller {
-  std::function<bool(ActionState)> isDone;
+  std::function<ActionState()> getState;
   public:
-    Poller(std::function<bool(ActionState)> isDone);
+    Poller(std::function<ActionState()> getState);
+
+    Poller(int *value, int settlingRange, int wait, int custom1 = INT32_MAX, int custom2 = INT32_MAX, int custom3 = INT32_MAX);
 
     ActionState getActionState();
 
