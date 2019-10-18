@@ -9,14 +9,18 @@ class Poller{
   int timeInTarget = -1;
   std::function<bool(int*)> isDone;
 
-  public:
-    Poller(std::function<bool(int*)> isDone);
+public:
+  Poller(void); // poller that is always true
 
-    Poller(std::function<double(void)> value, double target, double range, int timeout);
+  Poller(int time);
 
-    Poller(std::function<double(void)> value, double target);
+  Poller(std::function<bool(int*)> isDone);
 
-    bool finished(void);
+  Poller(std::function<double(void)> value, double target, double range, int timeout);
+
+  Poller(std::function<double(void)> value, double target);
+
+  bool finished(void);
 };
 
 #endif //_POLLER_HPP_

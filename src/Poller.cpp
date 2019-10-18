@@ -1,5 +1,18 @@
 #include "main.h"
 
+Poller::Poller(void){
+  this->isDone = [](int* timeInTarget){
+    return true;
+  };
+};
+
+Poller::Poller(int time){
+  this->timeInTarget = pros::millis();
+  this->isDone = [time](int* timeInTarget){
+    return (pros::millis() - *timeInTarget) > time; // return true if elapsed time is greater than desired time
+  };
+};
+
 Poller::Poller(std::function<bool(int*)> isDone){
   this->isDone = isDone;
 };

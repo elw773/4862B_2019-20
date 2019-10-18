@@ -11,22 +11,22 @@ class MotorGroup{
   std::vector<pros::Motor*> motors;
   int slew;
 
-  public:
-    MotorGroup(std::vector<pros::Motor*> motors, int slew = INT32_MAX);
+public:
+  MotorGroup(std::vector<pros::Motor*> motors, int slew = INT32_MAX);
 
-    void move(int power); // sets motor voltage from -127 to 127
+  void move(int power); // sets motor voltage from -127 to 127
 
-    void movePosition(double position, int velocity); // moves motor to position in degrees
+  void movePosition(double position, int velocity); // moves motor to position in degrees
 
-    void moveVelocity(int velocity); // sets motor velocity in rpm
+  void moveVelocity(int velocity); // sets motor velocity in rpm
 
-    void setZeroPosition(void);
+  void setZeroPosition(void);
 
-    double getTargetPosition(void);
+  double getTargetPosition(void);
 
-    int getTargetVelocity(void);
+  int getTargetVelocity(void);
 
-    int getVelocity(void);
+  int getVelocity(void);
 };
 
 #endif //_MOTOR_GROUP_HPP_
