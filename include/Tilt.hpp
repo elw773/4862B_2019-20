@@ -8,15 +8,18 @@
 
 namespace Tilt{
   const int DEADBAND = 20;
-
+  const int DEF_VELOCITY = 60;
+  const int SLOW_VELOCITY = 35;
+  const int SLOW_SPOT = 00;
   const int BOT_POWER = -4;
 
   enum State {
     TOWER,
     BOT_INTAKE,
-    LOW_INTAKE,
     MID_INTAKE,
+    HIGH_INTAKE,
     DROP_STACK,
+    STOP,
     CALIBRATE
   };
 

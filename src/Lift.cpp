@@ -9,6 +9,7 @@ Poller Lift::Machine::setState(State state){
     case CALIBRATE: return calibrate(); break;
     case INTAKE: return moveAndHold(INTAKE, INTAKE_POWER); break;
     case DROP_STACK: return moveAndHold(DROP_STACK, DROP_STACK_POWER); break;
+    case STOP: return liftMotors->move(0); break;
     default:
       this->currentState = [this, state](void){
         liftMotors->movePosition(state, DEF_VELOCITY, DEADBAND);
@@ -39,5 +40,6 @@ Poller Lift::Machine::calibrate(void){
   Poller isDone = Poller([this](int*){
     return liftMotors->getVelocity() == 0;
   });
-  return Poller(&Poller(200), &isDone);
+  Poller timer = Poller(200);
+  return Poller(&timer, &isDone);
 };

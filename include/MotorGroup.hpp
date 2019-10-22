@@ -16,7 +16,7 @@ class MotorGroup{
 public:
   MotorGroup(std::vector<pros::Motor*> motors, int slew = INT32_MAX);
 
-  void move(int power); // sets motor voltage from -127 to 127
+  Poller move(int power); // sets motor voltage from -127 to 127
 
   Poller movePosition(int position, int velocity, int range = 10); // moves motor to position in degrees
 

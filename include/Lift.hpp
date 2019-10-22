@@ -18,6 +18,7 @@ namespace Lift {
     MID_TOWER,
     INTAKE,
     DROP_STACK,
+    STOP,
     CALIBRATE
   };
 
@@ -34,4 +35,4 @@ namespace Lift {
   };
 };
 
-#endif //_LIFT_TILT_MACHINE_HPP_
+#endif //_LIFT_MACHINE_HPP_

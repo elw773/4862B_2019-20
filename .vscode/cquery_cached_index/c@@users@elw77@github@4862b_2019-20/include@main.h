@@ -36,6 +36,17 @@
 
 #include "api.h"
 
+#include "Handleable.hpp"
+#include "Poller.hpp"
+#include "MotorGroup.hpp"
+
+#include "Drive.hpp"
+#include "Lift.hpp"
+#include "Tilt.hpp"
+#include "Intake.hpp"
+#include "LiftTilt.hpp"
+
+
 /**
  * You should add more #includes here
  */
