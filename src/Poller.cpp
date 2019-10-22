@@ -2,7 +2,19 @@
 
 Poller::Poller(void){
   this->isDone = [](int* timeInTarget){
-    return true;
+    return false;
+  };
+};
+
+Poller::Poller(bool b){
+  this->isDone = [b](int* timeInTarget){
+    return b;
+  };
+};
+
+void Poller::setPoller(bool b){
+  this->isDone = [b](int* timeInTarget){
+    return b;
   };
 };
 
@@ -17,7 +29,7 @@ Poller::Poller(std::function<bool(int*)> isDone){
   this->isDone = isDone;
 };
 
-Poller::Poller(std::function<double(void)> value, double target, double range, int timeout = 0){
+Poller::Poller(std::function<double(void)> value, double target, double range, int timeout){
   this->isDone = [value, target, range, timeout](int* timeInTarget){
       if(fabs(target-value()) < range){
         if(*timeInTarget == NOT_IN_TARGET){ // if was not in target
@@ -49,6 +61,12 @@ Poller::Poller(std::function<double(void)> value, double target){
     };
   }
 };
+
+Poller::Poller(Poller* a, Poller* b){
+  this->isDone = [a, b](int* timeInTarget){
+    return a->finished() && b->finished();
+  };
+}
 
 bool Poller::finished(void){
   return isDone(&timeInTarget);

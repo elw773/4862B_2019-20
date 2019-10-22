@@ -12,13 +12,19 @@ class Poller{
 public:
   Poller(void); // poller that is always true
 
+  Poller(bool b);
+
+  void setPoller(bool b);
+
   Poller(int time);
 
   Poller(std::function<bool(int*)> isDone);
 
-  Poller(std::function<double(void)> value, double target, double range, int timeout);
+  Poller(std::function<double(void)> value, double target, double range, int timeout = 0);
 
   Poller(std::function<double(void)> value, double target);
+
+  Poller(Poller* a, Poller* b);
 
   bool finished(void);
 };

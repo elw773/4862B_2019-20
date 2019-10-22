@@ -38,10 +38,13 @@
 
 #include "MotorGroup.hpp"
 #include "Poller.hpp"
+#include "Handleable.hpp"
 
-#include "DriveMachine.hpp"
-#include "IntakeMachine.hpp"
-#include "LiftTiltMachine.hpp"
+#include "Drive.hpp"
+#include "Intake.hpp"
+#include "Lift.hpp"
+#include "Tilt.hpp"
+#include "LiftTilt.hpp"
 
 /**
  * You should add more #includes here

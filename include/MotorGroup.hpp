@@ -7,6 +7,8 @@
 
 #include "api.h"
 
+#include "Poller.hpp"
+
 class MotorGroup{
   std::vector<pros::Motor*> motors;
   int slew;
@@ -16,13 +18,15 @@ public:
 
   void move(int power); // sets motor voltage from -127 to 127
 
-  void movePosition(double position, int velocity); // moves motor to position in degrees
+  Poller movePosition(int position, int velocity, int range = 10); // moves motor to position in degrees
 
-  void moveVelocity(int velocity); // sets motor velocity in rpm
+  Poller moveVelocity(int velocity, int range = 10); // sets motor velocity in rpm
 
   void setZeroPosition(void);
 
-  double getTargetPosition(void);
+  int getTargetPosition(void);
+
+  int getPosition(void);
 
   int getTargetVelocity(void);
 
