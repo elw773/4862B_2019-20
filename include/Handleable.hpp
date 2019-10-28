@@ -16,7 +16,9 @@
 class Handleable{
 protected:
   std::function<void(void)> currentState;
+  int state;
 public:
+  int getState(void);
   void handle(void);
 };
 

@@ -44,3 +44,8 @@ Poller LiftTilt::Machine::setState(State state){
   }
   return Poller(&liftPoller, &tiltPoller);
 };
+
+void LiftTilt::Machine::handle(void){
+  lift->handle();
+  tilt->handle();
+};

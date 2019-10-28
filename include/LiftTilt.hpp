@@ -27,6 +27,8 @@ namespace LiftTilt {
     Machine(Tilt::Machine* tilt, Lift::Machine* lift);
 
     Poller setState(State state);
+
+    void handle(void);
   };
 };
 

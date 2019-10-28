@@ -45,6 +45,7 @@
 #include "Tilt.hpp"
 #include "Intake.hpp"
 #include "LiftTilt.hpp"
+#include "Robot.hpp"
 
 
 /**

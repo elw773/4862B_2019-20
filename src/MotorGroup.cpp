@@ -3,7 +3,6 @@
 MotorGroup::MotorGroup(std::vector<pros::Motor*> motors, int slew){
   for(pros::Motor* motor:motors){
     this->motors.push_back(motor);
-    motor->set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
   }
   this->slew = slew;
 };
