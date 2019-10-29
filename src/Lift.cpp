@@ -1,5 +1,7 @@
 #include "main.h"
 
+Lift::
+
 Lift::Machine::Machine(MotorGroup* liftMotors){
   this->liftMotors = liftMotors;
 };

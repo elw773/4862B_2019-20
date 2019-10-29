@@ -27,6 +27,8 @@ namespace Lift {
     CALIBRATE
   };
 
+  int stateToPos(State state);
+
   class Machine : public Handleable{
     MotorGroup* liftMotors;
   public:
