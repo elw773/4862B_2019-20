@@ -11,15 +11,17 @@ namespace Intake {
   const int INTAKE_POWER = 110;
   const int HOLD_POWER = 40;
   const int OUTTAKE_POWER = -70;
-  const int TOWER_OUTTAKE_POWER = -70;
+  const int STACK_OUTTAKE_POWER = -100;
 
   enum State {
     STACK_OUTTAKE = -2,
     OUTTAKE = -1,
     STOP = 0,
     HOLD = 1,
-    INTAKE = 2,
+    INTAKE = 2
   };
+
+  int stateToPower(State state);
 
   class Machine : public Handleable{
     MotorGroup* intakeMotors;

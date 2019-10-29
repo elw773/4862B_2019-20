@@ -7,8 +7,8 @@ Lift::Machine::Machine(MotorGroup* liftMotors){
 Poller Lift::Machine::setState(State state){
   switch(state){
     case CALIBRATE: return calibrate(); break;
-    case INTAKE: return moveAndHold(INTAKE, INTAKE_POWER); break;
-    case DROP_STACK: return moveAndHold(DROP_STACK, DROP_STACK_POWER); break;
+    case INTAKE: return moveAndHold(INTAKE, INTAKE_HOLD_POWER); break;
+    case DROP_STACK: return moveAndHold(DROP_STACK, DROP_STACK_HOLD_POWER); break;
     case STOP: return liftMotors->move(0); break;
     default:
       this->currentState = [this, state](void){

@@ -8,9 +8,14 @@
 
 namespace Lift {
   const int DEADBAND = 20;
-  const int DROP_STACK_POWER = -15;
-  const int INTAKE_POWER = -4;
   const int DEF_VELOCITY = 60;
+
+  const int DROP_STACK_HOLD_POWER = -15;
+  const int INTAKE_HOLD_POWER = -4;
+
+  const int ALLIANCE_TOWER_POS = 0;
+  const int LOW_TOWER_POS = 0;
+  const int MID_TOWER_POS = 0;
 
   enum State{
     ALLIANCE_TOWER,
