@@ -6,6 +6,8 @@
 #include "Intake.hpp"
 
 namespace Input{
+  extern bool tiltBtn;
+
   extern pros::Controller controller;
 
   LiftTilt::State getLiftTiltState(void);

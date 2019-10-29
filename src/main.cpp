@@ -157,18 +157,17 @@ void autonomous() {}
 
 	//Poller calibrate = Robot::liftTilt.setState(LiftTilt::CALIBRATE);
 	//Robot::wait(&calibrate);
-	//Robot::liftTilt.setState(LiftTilt::STOP);
+	Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
 
 	while(true){
-		pros::lcd::print(0, "Lift: %f", Robot::liftMotorGroup.getPosition());
-		pros::lcd::print(1, "Tilt: %f", Robot::tiltMotorGroup.getPosition());
+		pros::lcd::print(0, "Lift: %d", Robot::liftMotorGroup.getPosition());
+		pros::lcd::print(1, "Tilt: %d", Robot::tiltMotorGroup.getPosition());
 
 		Robot::liftTilt.setState(Input::getLiftTiltState());
 
 		Robot::intake.setState(Input::getIntakeState());
 
 		Robot::drive.move(Input::getleftDrive(), Input::getRightDrive());
-
 		Robot::handle();
 		pros::delay(20);
 	}

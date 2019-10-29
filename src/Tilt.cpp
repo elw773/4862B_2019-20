@@ -24,23 +24,29 @@ Poller Tilt::Machine::setState(State state){
     case CALIBRATE: return calibrate(); break;
     case STOP: return tiltMotors->move(0); break;
     default:
-      this->currentState = [this, state](void){
-        tiltMotors->movePosition(state, DEF_VELOCITY, DEADBAND);
+      int pos = stateToPos(state);
+      this->currentState = [this, pos](void){
+        tiltMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
       };
-      return tiltMotors->movePosition(state, DEF_VELOCITY, DEADBAND);
+      return tiltMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
       break;
   }
 };
 
 Poller Tilt::Machine::calibrate(void){
-  this->state = state;
-
-  this->currentState = [this](void){
-    tiltMotors->move(-30);
-  };
+  this->state = CALIBRATE;
   Poller isDone = Poller([this](int*){
     return tiltMotors->getVelocity() == 0;
   });
+
+  this->currentState = [this, &isDone](void){
+    tiltMotors->move(-30);
+    if(isDone.finished()){
+      tiltMotors->move(0);
+      tiltMotors->setZeroPosition();
+    }
+  };
+
   Poller timer = Poller(200);
   return Poller(&timer, &isDone);
 };

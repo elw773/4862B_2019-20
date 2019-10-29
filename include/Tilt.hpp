@@ -11,14 +11,14 @@ namespace Tilt{
   const int DEF_VELOCITY = 60;
   const int SLOW_VELOCITY = 35;
 
-  const int SLOW_POS = 00;
+  const int SLOW_POS = 1250;
   const int BOT_HOLD_POWER = -4;
 
-  const int TOWER_POS = 00;
-  const int BOT_INTAKE_POS = 00;
-  const int MID_INTAKE_POS = 00;
-  const int HIGH_INTAKE_POS = 00;
-  const int DROP_STACK_POS = 00;
+  const int TOWER_POS = 1500;
+  const int BOT_INTAKE_POS = 0;
+  const int MID_INTAKE_POS = 500;
+  const int HIGH_INTAKE_POS = 1500;
+  const int DROP_STACK_POS = 4400;
 
   enum State {
     TOWER = 5,

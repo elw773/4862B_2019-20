@@ -7,6 +7,7 @@
 #include "Handleable.hpp"
 
 namespace Intake {
+
   const int STOP_POWER = 0;
   const int INTAKE_POWER = 110;
   const int HOLD_POWER = 40;

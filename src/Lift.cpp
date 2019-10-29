@@ -32,6 +32,7 @@ Poller Lift::Machine::setState(State state){
 };
 
 Poller Lift::Machine::moveAndHold(double position, int holdPower){
+  /*
   Poller poller = liftMotors->movePosition(position, DEF_VELOCITY, DEADBAND);
   this->currentState = [this, position, holdPower, &poller](void){
     liftMotors->movePosition(position, DEF_VELOCITY, DEADBAND);
@@ -39,20 +40,32 @@ Poller Lift::Machine::moveAndHold(double position, int holdPower){
       liftMotors->move(holdPower);
     }
   };
-  return poller;
+  return poller;*/
+  this->currentState = [this, position, holdPower](void){
+    liftMotors->movePosition(position, DEF_VELOCITY, DEADBAND);
+    if(liftMotors->getPosition() < position + DEADBAND){
+      liftMotors->move(holdPower);
+    }
+  };
+
+
+  return Poller();
 };
 
 Poller Lift::Machine::calibrate(void){
   this->state = CALIBRATE;
-  this->currentState = [this](void){
-    liftMotors->move(-30);
-    if(liftMotors->getVelocity() == 0){
-      liftMotors->setZeroPosition();
-    }
-  };
   Poller isDone = Poller([this](int*){
     return liftMotors->getVelocity() == 0;
   });
+
+  this->currentState = [this, &isDone](void){
+    liftMotors->move(-30);
+    if(isDone.finished()){
+      liftMotors->move(0);
+      liftMotors->setZeroPosition();
+    }
+  };
+
   Poller timer = Poller(200);
   return Poller(&timer, &isDone);
 };

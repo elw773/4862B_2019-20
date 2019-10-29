@@ -13,9 +13,9 @@ namespace Lift {
   const int DROP_STACK_HOLD_POWER = -15;
   const int INTAKE_HOLD_POWER = -4;
 
-  const int ALLIANCE_TOWER_POS = 0;
-  const int LOW_TOWER_POS = 0;
-  const int MID_TOWER_POS = 0;
+  const int ALLIANCE_TOWER_POS = 1850;
+  const int LOW_TOWER_POS = 2100;
+  const int MID_TOWER_POS = 2850;
   const int INTAKE_POS = 0;
 
   enum State{

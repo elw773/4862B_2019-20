@@ -18,8 +18,8 @@ Poller MotorGroup::movePosition(int position, int velocity, int range){
   for(pros::Motor* motor:this->motors){
     motor->move_absolute(position, velocity);
   }
-  std::function<double(void)> pos = [this](void){ return this->getPosition(); };
-  return Poller(pos, position, range);
+  //std::function<double(void)> pos = [this](void){ return this->getPosition(); };
+  return Poller();
 };
 
 Poller MotorGroup::moveVelocity(int velocity, int range){
