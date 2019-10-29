@@ -30,13 +30,13 @@ Drive::Machine Robot::drive(&leftMotorGroup, &rightMotorGroup);
 
 std::vector<Handleable*> Robot::machines = {&Robot::intake, &Robot::liftTilt, &Robot::lift, &Robot::tilt, &Robot::drive};
 
-void handle(void){
+void Robot::handle(void){
   for(Handleable* machine : Robot::machines){
       machine->handle();
   }
 };
 
-void wait(Poller* poller){
+void Robot::wait(Poller* poller){
   while(!poller->finished()){
     handle();
   }

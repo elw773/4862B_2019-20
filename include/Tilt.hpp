@@ -10,18 +10,27 @@ namespace Tilt{
   const int DEADBAND = 20;
   const int DEF_VELOCITY = 60;
   const int SLOW_VELOCITY = 35;
-  const int SLOW_SPOT = 00;
-  const int BOT_POWER = -4;
+
+  const int SLOW_POS = 00;
+  const int BOT_HOLD_POWER = -4;
+
+  const int TOWER_POS = 00;
+  const int BOT_INTAKE_POS = 00;
+  const int MID_INTAKE_POS = 00;
+  const int HIGH_INTAKE_POS = 00;
+  const int DROP_STACK_POS = 00;
 
   enum State {
-    TOWER,
-    BOT_INTAKE,
-    MID_INTAKE,
-    HIGH_INTAKE,
-    DROP_STACK,
-    STOP,
-    CALIBRATE
+    TOWER = 5,
+    DROP_STACK = 4,
+    HIGH_INTAKE = 3,
+    MID_INTAKE = 2,
+    BOT_INTAKE = 1,
+    STOP = 0,
+    CALIBRATE = -1
   };
+
+  int stateToPos(State state);
 
   class Machine : public Handleable{
     MotorGroup* tiltMotors;
@@ -30,11 +39,9 @@ namespace Tilt{
 
     Poller setState(State state);
 
-    Poller dropStack(void);
-
-    Poller bottom(void);
-
     Poller calibrate(void);
+
+    void handle(void);
   };
 };
 

@@ -16,15 +16,16 @@ namespace Lift {
   const int ALLIANCE_TOWER_POS = 0;
   const int LOW_TOWER_POS = 0;
   const int MID_TOWER_POS = 0;
+  const int INTAKE_POS = 0;
 
   enum State{
-    ALLIANCE_TOWER,
-    LOW_TOWER,
-    MID_TOWER,
-    INTAKE,
-    DROP_STACK,
-    STOP,
-    CALIBRATE
+    ALLIANCE_TOWER = 5,
+    LOW_TOWER = 4,
+    MID_TOWER = 3,
+    INTAKE = 2,
+    DROP_STACK = 1,
+    STOP = 0,
+    CALIBRATE = -1
   };
 
   int stateToPos(State state);

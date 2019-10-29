@@ -10,14 +10,15 @@
 
 namespace LiftTilt {
   enum State{
-    ALLIANCE_TOWER,
-    LOW_TOWER,
-    MID_TOWER,
-    BOT_INTAKE,
-    MID_INTAKE,
-    HIGH_INTAKE,
-    STOP,
-    CALIBRATE
+    ALLIANCE_TOWER = 7,
+    LOW_TOWER = 6,
+    MID_TOWER = 5,
+    DROP_STACK = 4,
+    HIGH_INTAKE = 3,
+    MID_INTAKE = 2,
+    BOT_INTAKE = 1,
+    STOP = 0,
+    CALIBRATE = -1
   };
 
   class Machine : public Handleable{

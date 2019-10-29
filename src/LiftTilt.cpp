@@ -6,6 +6,8 @@ LiftTilt::Machine::Machine(Tilt::Machine* tilt, Lift::Machine* lift){
 };
 
 Poller LiftTilt::Machine::setState(State state){
+  this->state = state;
+
   Poller liftPoller;
   Poller tiltPoller;
   switch(state){
@@ -21,6 +23,10 @@ Poller LiftTilt::Machine::setState(State state){
        liftPoller = lift->setState(Lift::MID_TOWER);
        tiltPoller = tilt->setState(Tilt::TOWER);
        break;
+    case DROP_STACK:
+      liftPoller = lift->setState(Lift::DROP_STACK);
+      tiltPoller = tilt->setState(Tilt::DROP_STACK);
+      break;
     case BOT_INTAKE:
       liftPoller = lift->setState(Lift::INTAKE);
       tiltPoller = tilt->setState(Tilt::BOT_INTAKE);

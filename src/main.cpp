@@ -14,7 +14,6 @@ int LIFT_DOWN = 100;
  */
 void initialize() {
 	pros::lcd::initialize();
-
 }
 
 /**
@@ -62,6 +61,7 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
  void opcontrol() {
+	 /*
  	pros::Controller master(pros::E_CONTROLLER_MASTER);
    pros::lcd::initialize();
 
@@ -153,5 +153,23 @@ void autonomous() {}
     }
 
  		pros::delay(20);
- 	}
+ 	}*/
+
+	//Poller calibrate = Robot::liftTilt.setState(LiftTilt::CALIBRATE);
+	//Robot::wait(&calibrate);
+	//Robot::liftTilt.setState(LiftTilt::STOP);
+
+	while(true){
+		pros::lcd::print(0, "Lift: %f", Robot::liftMotorGroup.getPosition());
+		pros::lcd::print(1, "Tilt: %f", Robot::tiltMotorGroup.getPosition());
+
+		Robot::liftTilt.setState(Input::getLiftTiltState());
+
+		Robot::intake.setState(Input::getIntakeState());
+
+		Robot::drive.move(Input::getleftDrive(), Input::getRightDrive());
+
+		Robot::handle();
+		pros::delay(20);
+	}
  }

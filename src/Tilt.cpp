@@ -1,14 +1,27 @@
 #include "main.h"
 
+int Tilt::stateToPos(State state){
+
+  switch(state){
+    case TOWER: return TOWER_POS;
+    case BOT_INTAKE: return BOT_INTAKE_POS;
+    case MID_INTAKE: return MID_INTAKE_POS;
+    case HIGH_INTAKE: return HIGH_INTAKE_POS;
+    case DROP_STACK: return DROP_STACK_POS;
+    case STOP: return BOT_INTAKE_POS;
+    case CALIBRATE: return -1;
+  }
+};
+
 Tilt::Machine::Machine(MotorGroup* tiltMotors){
   this->tiltMotors = tiltMotors;
 };
 
 Poller Tilt::Machine::setState(State state){
+  this->state = state;
+
   switch(state){
     case CALIBRATE: return calibrate(); break;
-    case DROP_STACK: return dropStack(); break;
-    case BOT_INTAKE: return bottom(); break;
     case STOP: return tiltMotors->move(0); break;
     default:
       this->currentState = [this, state](void){
@@ -19,29 +32,9 @@ Poller Tilt::Machine::setState(State state){
   }
 };
 
-Poller Tilt::Machine::dropStack(void){
-  Poller poller = tiltMotors->movePosition(DROP_STACK, DEF_VELOCITY, DEADBAND);
-  this->currentState = [this](void){
-    tiltMotors->movePosition(DROP_STACK, DEF_VELOCITY, DEADBAND);
-    if(tiltMotors->getPosition() > SLOW_SPOT){
-      tiltMotors->movePosition(DROP_STACK, SLOW_VELOCITY, DEADBAND);
-    }
-  };
-  return poller;
-};
-
-Poller Tilt::Machine::bottom(void){
-  Poller poller = tiltMotors->movePosition(BOT_INTAKE, DEF_VELOCITY, DEADBAND);
-  this->currentState = [this, &poller](void){
-    tiltMotors->movePosition(BOT_INTAKE, DEF_VELOCITY, DEADBAND);
-    if(poller.finished()){
-      tiltMotors->move(BOT_POWER);
-    }
-  };
-  return poller;
-};
-
 Poller Tilt::Machine::calibrate(void){
+  this->state = state;
+
   this->currentState = [this](void){
     tiltMotors->move(-30);
   };
@@ -50,4 +43,13 @@ Poller Tilt::Machine::calibrate(void){
   });
   Poller timer = Poller(200);
   return Poller(&timer, &isDone);
+};
+
+void Tilt::Machine::handle(void){
+  this->currentState();
+  if(abs(tiltMotors->getPosition() - BOT_INTAKE_POS) < DEADBAND){
+    tiltMotors->move(BOT_HOLD_POWER);
+  } else if(tiltMotors->getPosition() > SLOW_POS && tiltMotors->getTargetPosition() > SLOW_POS){ // if is moving up and it it in slow zone
+    tiltMotors->movePosition(tiltMotors->getTargetPosition(), SLOW_VELOCITY, DEADBAND); // go where you were going, but slower now
+  }
 };

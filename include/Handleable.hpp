@@ -15,7 +15,7 @@
 
 class Handleable{
 protected:
-  std::function<void(void)> currentState;
+  std::function<void(void)> currentState = [](){return;}; // do nothing incase it is called
   int state;
 public:
   int getState(void);

@@ -39,6 +39,7 @@
 #include "Handleable.hpp"
 #include "Poller.hpp"
 #include "MotorGroup.hpp"
+#include "Input.hpp"
 
 #include "Drive.hpp"
 #include "Lift.hpp"
