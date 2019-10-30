@@ -7,8 +7,6 @@ namespace Atn {
   const bool RED = true;
   const bool BLUE = false;
 
-
-
   class Auton{
     std::function<void(bool)> func;
     std::string name;
@@ -17,7 +15,7 @@ namespace Atn {
     void run(bool side);
   };
 
-  std::vector<Auton> autons;
+  extern std::vector<Auton> autons;
 };
 
 #endif //_AUTON_HPP_

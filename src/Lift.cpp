@@ -1,5 +1,7 @@
 #include "main.h"
 
+int Lift::holdPower = Lift::INTAKE_HOLD_POWER;
+
 int Lift::stateToPos(State state){
   switch(state){
     case ALLIANCE_TOWER: return ALLIANCE_TOWER_POS;
@@ -18,54 +20,41 @@ Poller Lift::Machine::setState(State state){
   this->state = state;
   switch(state){
     case CALIBRATE: return calibrate(); break;
-    case INTAKE: return moveAndHold(INTAKE, INTAKE_HOLD_POWER); break;
-    case DROP_STACK: return moveAndHold(DROP_STACK, DROP_STACK_HOLD_POWER); break;
     case STOP: return liftMotors->move(0); break;
-    default:
-      int pos = stateToPos(state);
-      this->currentState = [this, pos](void){
-        liftMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
-      };
-      return liftMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
-      break;
+    case INTAKE: holdPower = INTAKE_HOLD_POWER; break;
+    case DROP_STACK: holdPower = DROP_STACK_HOLD_POWER; break;
   }
+  int pos = stateToPos(state);
+  this->currentState = [this, pos](void){
+    liftMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
+  };
+  return liftMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
 };
 
-Poller Lift::Machine::moveAndHold(double position, int holdPower){
-  /*
-  Poller poller = liftMotors->movePosition(position, DEF_VELOCITY, DEADBAND);
-  this->currentState = [this, position, holdPower, &poller](void){
-    liftMotors->movePosition(position, DEF_VELOCITY, DEADBAND);
-    if(poller.finished()){
-      liftMotors->move(holdPower);
-    }
-  };
-  return poller;*/
-  this->currentState = [this, position, holdPower](void){
-    liftMotors->movePosition(position, DEF_VELOCITY, DEADBAND);
-    if(liftMotors->getPosition() < position + DEADBAND){
-      liftMotors->move(holdPower);
-    }
-  };
-
-
-  return Poller();
-};
 
 Poller Lift::Machine::calibrate(void){
   this->state = CALIBRATE;
-  Poller isDone = Poller([this](int*){
-    return liftMotors->getVelocity() == 0;
-  });
+  Poller isDone = Poller(false);
 
   this->currentState = [this, &isDone](void){
     liftMotors->move(-30);
-    if(isDone.finished()){
+    if(liftMotors->getVelocity()){
       liftMotors->move(0);
       liftMotors->setZeroPosition();
+      isDone.setPoller(true);
     }
   };
 
   Poller timer = Poller(200);
   return Poller(&timer, &isDone);
+};
+
+
+void Lift::Machine::handle(void){
+  this->currentState();
+  if(state != CALIBRATE){
+    if(abs(liftMotors->getPosition() - INTAKE_POS) < DEADBAND){
+      liftMotors->move(holdPower);
+    }
+  }
 };

@@ -35,15 +35,14 @@ Poller Tilt::Machine::setState(State state){
 
 Poller Tilt::Machine::calibrate(void){
   this->state = CALIBRATE;
-  Poller isDone = Poller([this](int*){
-    return tiltMotors->getVelocity() == 0;
-  });
+  Poller isDone = Poller(false);
 
   this->currentState = [this, &isDone](void){
     tiltMotors->move(-30);
-    if(isDone.finished()){
+    if(tiltMotors->getVelocity()){
       tiltMotors->move(0);
       tiltMotors->setZeroPosition();
+      isDone.setPoller(true);
     }
   };
 
@@ -53,9 +52,11 @@ Poller Tilt::Machine::calibrate(void){
 
 void Tilt::Machine::handle(void){
   this->currentState();
-  if(abs(tiltMotors->getPosition() - BOT_INTAKE_POS) < DEADBAND){
-    tiltMotors->move(BOT_HOLD_POWER);
-  } else if(tiltMotors->getPosition() > SLOW_POS && tiltMotors->getTargetPosition() > SLOW_POS){ // if is moving up and it it in slow zone
-    tiltMotors->movePosition(tiltMotors->getTargetPosition(), SLOW_VELOCITY, DEADBAND); // go where you were going, but slower now
+  if(state != CALIBRATE){
+    if(abs(tiltMotors->getPosition() - BOT_INTAKE_POS) < DEADBAND){
+      tiltMotors->move(BOT_HOLD_POWER);
+    } else if(tiltMotors->getPosition() > SLOW_POS && state == DROP_STACK){ // if is moving up and it it in slow zone
+      tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND); // go where you were going, but slower now
+    }
   }
 };

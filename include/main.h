@@ -40,6 +40,7 @@
 #include "Poller.hpp"
 #include "MotorGroup.hpp"
 #include "Input.hpp"
+#include "Auton.hpp"
 
 #include "Drive.hpp"
 #include "Lift.hpp"

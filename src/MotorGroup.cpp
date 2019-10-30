@@ -1,5 +1,7 @@
 #include "main.h"
 
+typedef int (MotorGroup::*ValueFn)(void);
+
 MotorGroup::MotorGroup(std::vector<pros::Motor*> motors, int slew){
   for(pros::Motor* motor:motors){
     this->motors.push_back(motor);
@@ -14,20 +16,18 @@ Poller MotorGroup::move(int power){
   return Poller();
 };
 
-Poller MotorGroup::movePosition(int position, int velocity, int range){
+Poller MotorGroup::movePosition(int position, int velocity, int range, int timeout){
   for(pros::Motor* motor:this->motors){
     motor->move_absolute(position, velocity);
   }
-  //std::function<double(void)> pos = [this](void){ return this->getPosition(); };
-  return Poller();
+  return Poller(std::bind(&MotorGroup::getPosition, this), position, range, timeout);
 };
 
 Poller MotorGroup::moveVelocity(int velocity, int range){
   for(pros::Motor* motor:this->motors){
     motor->move_velocity(velocity);
   }
-  std::function<double(void)> vel = [this](void){ return this->getVelocity(); };
-  return Poller(vel, velocity, range);
+  return Poller(std::bind(&MotorGroup::getVelocity, this), velocity, range);
 };
 
 

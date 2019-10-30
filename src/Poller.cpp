@@ -29,9 +29,15 @@ Poller::Poller(std::function<bool(int*)> isDone){
   this->isDone = isDone;
 };
 
-Poller::Poller(std::function<double(void)> value, double target, double range, int timeout){
+Poller::Poller(std::function<bool(void)> isDone){
+  this->isDone = [&isDone](int* timeInTarget){
+    return isDone();
+  };
+};
+
+Poller::Poller(std::function<int(void)> value, int target, int range, int timeout){
   this->isDone = [value, target, range, timeout](int* timeInTarget){
-      if(fabs(target-value()) < range){
+      if(abs(target-value()) < range){
         if(*timeInTarget == NOT_IN_TARGET){ // if was not in target
           *timeInTarget = pros::millis();
         }
@@ -46,7 +52,7 @@ Poller::Poller(std::function<double(void)> value, double target, double range, i
   };
 };
 
-Poller::Poller(std::function<double(void)> value, double target){
+Poller::Poller(std::function<int(void)> value, int target){
   if(value() < target){ // if value starts below target,
     this->isDone = [value, target](int* timeInTarget){
       return value() > target; //true if value greater than target

@@ -8,15 +8,17 @@
 
 namespace Lift {
   const int DEADBAND = 20;
-  const int DEF_VELOCITY = 60;
+  const int DEF_VELOCITY = 90;
 
   const int DROP_STACK_HOLD_POWER = -15;
   const int INTAKE_HOLD_POWER = -4;
 
-  const int ALLIANCE_TOWER_POS = 1850;
-  const int LOW_TOWER_POS = 2100;
-  const int MID_TOWER_POS = 2850;
+  const int ALLIANCE_TOWER_POS = 1700;
+  const int LOW_TOWER_POS = 1900;
+  const int MID_TOWER_POS = 2450;
   const int INTAKE_POS = 0;
+
+  extern int holdPower;
 
   enum State{
     ALLIANCE_TOWER = 5,
@@ -28,6 +30,8 @@ namespace Lift {
     CALIBRATE = -1
   };
 
+
+
   int stateToPos(State state);
 
   class Machine : public Handleable{
@@ -37,9 +41,9 @@ namespace Lift {
 
     Poller setState(State state);
 
-    Poller moveAndHold(double position, int holdPower);
-
     Poller calibrate(void);
+
+    void handle(void);
   };
 };
 

@@ -18,7 +18,7 @@ public:
 
   Poller move(int power); // sets motor voltage from -127 to 127
 
-  Poller movePosition(int position, int velocity, int range = 10); // moves motor to position in degrees
+  Poller movePosition(int position, int velocity, int range = 10, int timeout = 0); // moves motor to position in degrees
 
   Poller moveVelocity(int velocity, int range = 10); // sets motor velocity in rpm
 

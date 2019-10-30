@@ -22,7 +22,7 @@ LiftTilt::State Input::getLiftTiltState(void){
   }
 
   if(botDpad){
-    return LiftTilt::ALLIANCE_TOWER;
+    return LiftTilt::MID_INTAKE;
   }
 
   if(leftDpad){
@@ -30,7 +30,7 @@ LiftTilt::State Input::getLiftTiltState(void){
   }
 
   if(rightDpad){
-    return LiftTilt::MID_INTAKE;
+    return LiftTilt::ALLIANCE_TOWER;
   }
 
   if(tiltState == Tilt::TOWER){
