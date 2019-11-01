@@ -55,8 +55,8 @@ void Tilt::Machine::handle(void){
   if(state != CALIBRATE){
     if(abs(tiltMotors->getPosition() - BOT_INTAKE_POS) < DEADBAND){
       tiltMotors->move(BOT_HOLD_POWER);
-    } else if(tiltMotors->getPosition() > SLOW_POS && state == DROP_STACK){ // if is moving up and it it in slow zone
-      tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND); // go where you were going, but slower now
+    } else if(state == DROP_STACK || state == HIGH_INTAKE){ // if is moving up and it it in slow zone
+      tiltMotors->movePosition(tiltMotors->getTargetPosition(), SLOW_VELOCITY, DEADBAND); // go where you were going, but slower now
     }
   }
 };
