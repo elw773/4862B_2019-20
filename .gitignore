@@ -7,9 +7,9 @@
 *.elf
 
 # PROS
-.vscode/
 bin/
 temp.log
 temp.errors
 *.ini
 .d/
+.vscode/
