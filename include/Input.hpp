@@ -6,7 +6,7 @@
 #include "Intake.hpp"
 
 namespace Input{
-  extern bool towerBtn;
+  extern bool tiltBtn;
 
   extern pros::Controller controller;
 
