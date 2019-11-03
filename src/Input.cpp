@@ -2,7 +2,7 @@
 
 pros::Controller Input::controller(pros::E_CONTROLLER_MASTER);
 
-bool Input::tiltBtn = false;
+bool Input::towerBtn = false;
 
 LiftTilt::State Input::getLiftTiltState(void){
   bool topShldr = controller.get_digital(DIGITAL_L1);
@@ -18,64 +18,37 @@ LiftTilt::State Input::getLiftTiltState(void){
 
 
   if(topDpad){
-    return LiftTilt::MID_TOWER;
+    return LiftTilt::HIGH_INTAKE;
   }
 
   if(botDpad){
-    return LiftTilt::MID_INTAKE;
+    return LiftTilt::BOT_INTAKE;
   }
 
   if(leftDpad){
-    return LiftTilt::LOW_TOWER;
+    return LiftTilt::MID_INTAKE;
   }
 
   if(rightDpad){
-    return LiftTilt::ALLIANCE_TOWER;
+    return LiftTilt::DROP_STACK;
   }
 
-  if(tiltState == Tilt::TOWER){
-    if(topShldr){
-      return LiftTilt::HIGH_INTAKE;
+
+  if(topShldr && !towerBtn){
+    switch(liftState){
+      case Lift::LOW_TOWER: return LiftTilt::MID_TOWER; break;
+      case Lift::MID_TOWER: return LiftTilt::MID_TOWER; break;
+      default: return LiftTilt::LOW_TOWER; break;
     }
-    if(botShldr){
-      return LiftTilt::BOT_INTAKE;
+  }
+  if(botShldr && !towerBtn){
+    switch(liftState){
+      case Lift::MID_TOWER: return LiftTilt::LOW_TOWER; break;
+      default: return LiftTilt::MID_INTAKE; break;
     }
-  } else {
-    //toggle through tilter positions
-    int nextState = liftTiltState;
-    if(!tiltBtn){
-      if(topShldr){
-        nextState ++;
-
-      } else if(botShldr){
-        nextState --;
-
-      }
-    }
-    tiltBtn = topShldr || botShldr;
-
-
-
-    if(nextState > LiftTilt::DROP_STACK){
-      nextState = LiftTilt::DROP_STACK;
-    } else if(nextState < LiftTilt::BOT_INTAKE){
-      nextState = LiftTilt::BOT_INTAKE;
-    }
-
-
-    LiftTilt::State state;
-    try{
-      state = static_cast<LiftTilt::State>(nextState);
-    } catch (...){
-      state = LiftTilt::STOP;
-    }
-
-    return state;
   }
 
-  // if not going to a tilt-specific state, use d-Dpad
-
-
+  towerBtn = topShldr || botShldr;
 
   LiftTilt::State state;
   try{

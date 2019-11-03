@@ -16,7 +16,7 @@ namespace Tilt{
 
   const int TOWER_POS = 550;
   const int BOT_INTAKE_POS = 0;
-  const int MID_INTAKE_POS = 800;
+  const int MID_INTAKE_POS = 675;
   const int HIGH_INTAKE_POS = 1500;
   const int DROP_STACK_POS = 4300;
 
