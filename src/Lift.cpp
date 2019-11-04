@@ -4,7 +4,6 @@ int Lift::holdPower = Lift::INTAKE_HOLD_POWER;
 
 int Lift::stateToPos(State state){
   switch(state){
-    case ALLIANCE_TOWER: return ALLIANCE_TOWER_POS;
     case LOW_TOWER: return LOW_TOWER_POS;
     case MID_TOWER: return MID_TOWER_POS;
     case CALIBRATE: return -1;

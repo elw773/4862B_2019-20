@@ -11,10 +11,6 @@ Poller LiftTilt::Machine::setState(State state){
   Poller liftPoller;
   Poller tiltPoller;
   switch(state){
-    case ALLIANCE_TOWER:
-      liftPoller = lift->setState(Lift::ALLIANCE_TOWER);
-      tiltPoller = tilt->setState(Tilt::TOWER);
-      break;
     case LOW_TOWER:
       liftPoller = lift->setState(Lift::LOW_TOWER);
       tiltPoller = tilt->setState(Tilt::TOWER);

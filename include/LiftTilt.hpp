@@ -10,7 +10,6 @@
 
 namespace LiftTilt {
   enum State{
-    ALLIANCE_TOWER = 7,
     LOW_TOWER = 6,
     MID_TOWER = 5,
     DROP_STACK = 4,

@@ -2,7 +2,7 @@
 
 pros::Controller Input::controller(pros::E_CONTROLLER_MASTER);
 
-bool Input::tiltBtn = false;
+bool Input::shldrBtn = false;
 
 LiftTilt::State Input::getLiftTiltState(void){
   bool topShldr = controller.get_digital(DIGITAL_L1);
@@ -18,73 +18,50 @@ LiftTilt::State Input::getLiftTiltState(void){
 
 
   if(topDpad){
-    return LiftTilt::MID_TOWER;
+    return LiftTilt::HIGH_INTAKE;
   }
 
   if(botDpad){
-    return LiftTilt::MID_INTAKE;
+    return LiftTilt::BOT_INTAKE;
   }
 
   if(leftDpad){
-    return LiftTilt::LOW_TOWER;
+    return LiftTilt::MID_TOWER;
   }
 
   if(rightDpad){
-    return LiftTilt::ALLIANCE_TOWER;
+    return LiftTilt::DROP_STACK;
   }
 
-  if(tiltState == Tilt::TOWER){
+
+
+  if(!shldrBtn){
     if(topShldr){
-      return LiftTilt::HIGH_INTAKE;
-    }
-    if(botShldr){
-      return LiftTilt::BOT_INTAKE;
-    }
-  } else {
-    //toggle through tilter positions
-    int nextState = liftTiltState;
-    if(!tiltBtn){
-      if(topShldr){
-        nextState ++;
-
-      } else if(botShldr){
-        nextState --;
-
+      switch(liftTiltState){
+        case LiftTilt::MID_TOWER: return LiftTilt::MID_TOWER;
+        case LiftTilt::LOW_TOWER: return LiftTilt::MID_TOWER;
+        default: return LiftTilt::LOW_TOWER;
+      }
+    } else if(botShldr){
+      switch(liftTiltState){
+        case LiftTilt::MID_TOWER: return LiftTilt::LOW_TOWER;
+        default: return LiftTilt::BOT_INTAKE;
       }
     }
-    tiltBtn = topShldr || botShldr;
-
-
-
-    if(nextState > LiftTilt::DROP_STACK){
-      nextState = LiftTilt::DROP_STACK;
-    } else if(nextState < LiftTilt::BOT_INTAKE){
-      nextState = LiftTilt::BOT_INTAKE;
-    }
-
-
-    LiftTilt::State state;
-    try{
-      state = static_cast<LiftTilt::State>(nextState);
-    } catch (...){
-      state = LiftTilt::STOP;
-    }
-
-    return state;
   }
 
-  // if not going to a tilt-specific state, use d-Dpad
+  shldrBtn = topShldr || botShldr;
 
+ // if no new state, use previous state
 
-
-  LiftTilt::State state;
+  LiftTilt::State lastState;
   try{
-    state = static_cast<LiftTilt::State>(liftTiltState);
+    lastState = static_cast<LiftTilt::State>(liftTiltState);
   } catch (...){
-    state = LiftTilt::STOP;
+    lastState = LiftTilt::STOP;
   }
 
-  return state; // if no new state, use previous state
+  return lastState;
 };
 
 Intake::State Input::getIntakeState(void){
