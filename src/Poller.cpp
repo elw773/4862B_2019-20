@@ -52,6 +52,23 @@ Poller::Poller(std::function<int(void)> value, int target, int range, int timeou
   };
 };
 
+Poller::Poller(std::function<double(void)> value, double target, double range, int timeout){
+  this->isDone = [value, target, range, timeout](int* timeInTarget){
+      if(fabs(target-value()) < range){
+        if(*timeInTarget == NOT_IN_TARGET){ // if was not in target
+          *timeInTarget = pros::millis();
+        }
+
+        if((pros::millis() - *timeInTarget) > timeout){ // if was in target loger than timeout
+          return true;
+        }
+      } else {
+        *timeInTarget = NOT_IN_TARGET;
+      }
+      return false;
+  };
+};
+
 Poller::Poller(std::function<int(void)> value, int target){
   if(value() < target){ // if value starts below target,
     this->isDone = [value, target](int* timeInTarget){
@@ -72,8 +89,18 @@ Poller::Poller(Poller* a, Poller* b){
   this->isDone = [a, b](int* timeInTarget){
     return a->finished() && b->finished();
   };
-}
+};
+
+Poller::Poller(std::function<bool(int*)> a, std::function<bool(int*)> b){
+  this->isDone = [a, b](int* timeInTarget){
+    return (a(timeInTarget)) && (b(timeInTarget));
+  };
+};
 
 bool Poller::finished(void){
   return isDone(&timeInTarget);
+};
+
+std::function<bool(int*)> Poller::getIsDone(void){
+  return isDone;
 };

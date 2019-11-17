@@ -11,6 +11,14 @@ Poller LiftTilt::Machine::setState(State state){
   Poller liftPoller;
   Poller tiltPoller;
   switch(state){
+    case PRE_TWO_GRAB:
+      liftPoller = lift->setState(Lift::PRE_TWO_GRAB);
+      tiltPoller = tilt->setState(Tilt::BOT_INTAKE);
+      break;
+    case GRAB_STACK:
+       liftPoller = lift->setState(Lift::GRAB_STACK);
+       tiltPoller = tilt->setState(Tilt::BOT_INTAKE);
+       break;
     case LOW_TOWER:
       liftPoller = lift->setState(Lift::LOW_TOWER);
       tiltPoller = tilt->setState(Tilt::TOWER);
@@ -43,8 +51,12 @@ Poller LiftTilt::Machine::setState(State state){
       liftPoller = lift->setState(Lift::CALIBRATE);
       tiltPoller = tilt->setState(Tilt::CALIBRATE);
       break;
+    case LIFT_POWER:
+      liftPoller = lift->setState(Lift::LIFT_POWER);
+      tiltPoller = tilt->setState(Tilt::LIFT_POWER);
+      break;
   }
-  return Poller(&liftPoller, &tiltPoller);
+  return Poller(liftPoller.getIsDone(), tiltPoller.getIsDone());
 };
 
 void LiftTilt::Machine::handle(void){

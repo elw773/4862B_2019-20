@@ -14,12 +14,13 @@ Poller Intake::Machine::setState(State state){
   return Poller();
 }
 
-int Intake::stateToPower(State state){
+int Intake::Machine::stateToPower(State state){
   switch(state){
     case STACK_OUTTAKE: return STACK_OUTTAKE_POWER;
     case OUTTAKE: return OUTTAKE_POWER;
     case STOP: return STOP_POWER;
     case HOLD: return HOLD_POWER;
+    case GRAB_STACK: return GRAB_STACK_POWER;
     case INTAKE: return INTAKE_POWER;
   }
 }

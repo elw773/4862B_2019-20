@@ -10,6 +10,8 @@
 
 namespace LiftTilt {
   enum State{
+    PRE_TWO_GRAB = 8,
+    GRAB_STACK = 7,
     LOW_TOWER = 6,
     MID_TOWER = 5,
     DROP_STACK = 4,
@@ -17,7 +19,8 @@ namespace LiftTilt {
     MID_INTAKE = 2,
     BOT_INTAKE = 1,
     STOP = 0,
-    CALIBRATE = -1
+    CALIBRATE = -1,
+    LIFT_POWER = -2
   };
 
   class Machine : public Handleable{

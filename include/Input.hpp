@@ -14,6 +14,8 @@ namespace Input{
 
   Intake::State getIntakeState(void);
 
+  int getLiftPower(void);
+
   int getRightDrive(void);
 
   int getleftDrive(void);

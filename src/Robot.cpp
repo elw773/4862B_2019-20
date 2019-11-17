@@ -15,7 +15,7 @@ std::vector<pros::Motor*> Robot::motors = {&leftMotor1, &leftMotor2, &rightMotor
 std::vector<std::string> Robot::motorNames = {"left1", "left2", "right1", "right2", "tilt", "lift", "intake1", "intake2"};
 
 MotorGroup Robot::intakeMotorGroup({&intakeMotor1, &intakeMotor2});
-MotorGroup Robot::liftMotorGroup({&liftMotor});
+MotorGroup Robot::liftMotorGroup({&liftMotor}, pros::E_MOTOR_BRAKE_HOLD);
 MotorGroup Robot::tiltMotorGroup({&tiltMotor});
 MotorGroup Robot::leftMotorGroup({&leftMotor1, &leftMotor2});
 MotorGroup Robot::rightMotorGroup({&rightMotor1, &rightMotor2});
@@ -31,9 +31,15 @@ Drive::Machine Robot::drive(&leftMotorGroup, &rightMotorGroup);
 std::vector<Handleable*> Robot::machines = {&Robot::intake, &Robot::liftTilt, &Robot::lift, &Robot::tilt, &Robot::drive};
 
 void Robot::handle(void){
-  for(Handleable* machine : Robot::machines){
-      machine->handle();
-  }
+  drive.handle();
+  liftTilt.handle();
+  intake.handle();
+  pros::lcd::print(0, "Distance: %f", drive.getDistance());
+  pros::lcd::print(1, "Angle: %f", drive.getAngle());
+  pros::lcd::print(2, "Lift: %d", lift.getState());
+
+
+  pros::delay(10);
 };
 
 void Robot::wait(Poller* poller){

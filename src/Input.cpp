@@ -5,6 +5,10 @@ pros::Controller Input::controller(pros::E_CONTROLLER_MASTER);
 bool Input::shldrBtn = false;
 
 LiftTilt::State Input::getLiftTiltState(void){
+  if(abs(controller.get_analog(ANALOG_LEFT_Y))>5){
+    return LiftTilt::LIFT_POWER;
+  }
+
   bool topShldr = controller.get_digital(DIGITAL_L1);
   bool botShldr = controller.get_digital(DIGITAL_L2);
   bool topDpad = controller.get_digital(DIGITAL_UP);
@@ -16,6 +20,12 @@ LiftTilt::State Input::getLiftTiltState(void){
   int tiltState = Robot::tilt.getState();
   int liftTiltState = Robot::liftTilt.getState();
 
+  if(controller.get_digital(DIGITAL_A)){
+    return LiftTilt::PRE_TWO_GRAB;
+  }
+  if(controller.get_digital(DIGITAL_B)){
+    return LiftTilt::GRAB_STACK;
+  }
 
   if(topDpad){
     return LiftTilt::HIGH_INTAKE;
@@ -26,7 +36,7 @@ LiftTilt::State Input::getLiftTiltState(void){
   }
 
   if(leftDpad){
-    return LiftTilt::MID_TOWER;
+    return LiftTilt::MID_INTAKE;
   }
 
   if(rightDpad){
@@ -36,6 +46,7 @@ LiftTilt::State Input::getLiftTiltState(void){
 
 
   if(!shldrBtn){
+    shldrBtn = topShldr || botShldr;
     if(topShldr){
       switch(liftTiltState){
         case LiftTilt::MID_TOWER: return LiftTilt::MID_TOWER;
@@ -49,8 +60,9 @@ LiftTilt::State Input::getLiftTiltState(void){
       }
     }
   }
-
   shldrBtn = topShldr || botShldr;
+
+
 
  // if no new state, use previous state
 
@@ -84,6 +96,13 @@ Intake::State Input::getIntakeState(void){
 
   return Intake::STOP;
 };
+
+int Input::getLiftPower(void){
+  if(abs(controller.get_analog(ANALOG_LEFT_Y))<5){
+    return 0;
+  }
+  return controller.get_analog(ANALOG_LEFT_Y);
+}
 
 int Input::getRightDrive(void){
   return controller.get_analog(ANALOG_RIGHT_Y) - controller.get_analog(ANALOG_RIGHT_X);

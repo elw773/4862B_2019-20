@@ -8,8 +8,15 @@
 
 namespace Drive {
   enum State{
-    POWER
+    POWER,
+    DISTANCE,
+    ANGLE
   };
+
+  const double ticksToDistance = 0.0185185;
+  const double distanceToTicks = 1/ticksToDistance;
+  const double ticksToAngle = 0.098361;
+  const double angleToTicks = 1/ticksToAngle;
 
   class Machine : public Handleable{
     MotorGroup* leftMotors;
@@ -18,6 +25,14 @@ namespace Drive {
     Machine(MotorGroup* leftMotors, MotorGroup* rightMotors);
 
     Poller move(int left, int right);
+
+    Poller moveDistance(double distance, int velocity, double range = 0.5, int timeout = 200);
+
+    Poller moveAngle(double angle, int velocity, double range = 5, int timeout = 200);
+
+    double getDistance();
+
+    double getAngle();
   };
 };
 
