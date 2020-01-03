@@ -19,9 +19,9 @@ void Poller::setPoller(bool b){
 };
 
 Poller::Poller(int time){
-  this->timeInTarget = pros::millis();
-  this->isDone = [time](int* timeInTarget){
-    return (pros::millis() - *timeInTarget) > time; // return true if elapsed time is greater than desired time
+  int startTime = pros::millis();
+  this->isDone = [time, startTime](int* timeInTarget){
+    return (pros::millis() - startTime) > time; // return true if elapsed time is greater than desired time
   };
 };
 
@@ -86,6 +86,8 @@ Poller::Poller(std::function<int(void)> value, int target){
 };
 
 Poller::Poller(Poller* a, Poller* b){
+  std::function<bool(int*)> aFunc = a->getIsDone();
+  std::function<bool(int*)> bRunc = b->getIsDone();
   this->isDone = [a, b](int* timeInTarget){
     return a->finished() && b->finished();
   };

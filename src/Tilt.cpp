@@ -26,6 +26,8 @@ Poller Tilt::Machine::setState(State state){
     case STOP: return tiltMotors->move(0); break;
     case DROP_STACK: return dropStack(); break;
     case LIFT_POWER: return Poller(); break;
+    case TILT_POWER: return movePower(Input::getLiftPower()); break;
+
     default:
       double pos = stateToPos(state);
       this->currentState = [this, pos](void){
@@ -36,34 +38,56 @@ Poller Tilt::Machine::setState(State state){
   }
 };
 
+Poller Tilt::Machine::movePower(int power){
+  state = TILT_POWER;
+  this->currentState = [this, power](void){
+    tiltMotors->move(power);
+  };
+  return tiltMotors->move(power);
+};
+
 Poller Tilt::Machine::calibrate(void){
   this->state = CALIBRATE;
-  Poller isDone = Poller(false);
 
-  this->currentState = [this, &isDone](void){
-    tiltMotors->move(-5);
-    if(tiltMotors->getVelocity()){
-      tiltMotors->move(0);
+  this->currentState = [this](void){
+    tiltMotors->move(-25);
+    if(tiltMotors->getVelocity() == 0){
       tiltMotors->setZeroPosition();
-      isDone.setPoller(true);
     }
   };
-
-  Poller timer = Poller(200);
-  return Poller(&timer, &isDone);
+  std::function<bool(int*)> timer = Poller(300).getIsDone();
+  Poller isDone = Poller([this, timer](int* param){
+    if(tiltMotors->getVelocity() == 0 && timer(param)){
+      tiltMotors->setZeroPosition();
+      tiltMotors->move(0);
+      return true;
+    }
+    return false;
+  });
+  return isDone;
 };
 
 Poller Tilt::Machine::dropStack(void){
   this->state = DROP_STACK;
   this->currentState = [this](void){
-      tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND);
+      //tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND);
+      double error = DROP_STACK_POS - tiltMotors->getPosition();
+      if(error > DEADBAND){
+        int velocity = (int)(error * 0.023);
+        if(velocity > SLOW_VELOCITY){
+          velocity = SLOW_VELOCITY;
+        }
+        tiltMotors->moveVelocity(velocity);
+      } else {
+        tiltMotors->movePosition(DROP_STACK_POS, 50);
+      }
   };
 
-  return tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND+80, 1000);
+  return tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND+450, 200);
 };
 
 void Tilt::Machine::handle(void){
-  if(tiltMotors->getPosition() < BOT_INTAKE_POS + DEADBAND && state == BOT_INTAKE){
+  if(tiltMotors->getPosition() < BOT_INTAKE_POS + DEADBAND + CALIBRATE_OFFSET && state == BOT_INTAKE && state != CALIBRATE){
     tiltMotors->move(BOT_HOLD_POWER);
   }/* else if(tiltMotors->getPosition() > SLOW_POS && state == DROP_STACK){ // if is moving up and it it in slow zone
     tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND); // go where you were going, but slower now

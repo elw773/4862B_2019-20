@@ -41,6 +41,7 @@
 #include "MotorGroup.hpp"
 #include "Input.hpp"
 #include "Auton.hpp"
+#include "Display.hpp"
 
 #include "Drive.hpp"
 #include "Lift.hpp"

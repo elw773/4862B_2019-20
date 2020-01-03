@@ -20,7 +20,8 @@ namespace LiftTilt {
     BOT_INTAKE = 1,
     STOP = 0,
     CALIBRATE = -1,
-    LIFT_POWER = -2
+    LIFT_POWER = -2,
+    TILT_POWER = -3
   };
 
   class Machine : public Handleable{

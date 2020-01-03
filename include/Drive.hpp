@@ -7,6 +7,8 @@
 #include "Handleable.hpp"
 
 namespace Drive {
+  const double DEF_RANGE = 0.5;
+
   enum State{
     POWER,
     DISTANCE,

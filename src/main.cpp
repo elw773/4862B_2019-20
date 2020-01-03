@@ -13,7 +13,7 @@ int LIFT_DOWN = 100;
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	pros::lcd::initialize();
+	Display::init();
 }
 
 /**
@@ -21,7 +21,13 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+	while(pros::competition::is_disabled ( )){
+		Display::update();
+
+		pros::delay(10);
+	}
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -32,7 +38,13 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	while(true){
+		Display::update();
+
+		pros::delay(10);
+	}
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -45,7 +57,9 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	Atn::runAuton();
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -222,8 +236,14 @@ void autonomous() {}
 
 
 	//Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
-	Robot::drive.move(0,0);
+	//Robot::drive.move(0,0);
+	//Poller poller = Robot::liftTilt.setState(LiftTilt::CALIBRATE);
+	//Robot::wait(&poller);
 	while(true){
+		if(Input::controller.get_digital(DIGITAL_X) && Input::controller.get_digital(DIGITAL_A)){
+				Atn::runAuton();
+		}
+
 		Robot::liftTilt.setState(Input::getLiftTiltState());
 
 		Robot::intake.setState(Input::getIntakeState());

@@ -29,6 +29,7 @@ Poller LiftTilt::Machine::setState(State state){
        break;
     case DROP_STACK:
       liftPoller = lift->setState(Lift::DROP_STACK);
+      liftPoller = Poller(true);
       tiltPoller = tilt->setState(Tilt::DROP_STACK);
       break;
     case BOT_INTAKE:
@@ -54,6 +55,10 @@ Poller LiftTilt::Machine::setState(State state){
     case LIFT_POWER:
       liftPoller = lift->setState(Lift::LIFT_POWER);
       tiltPoller = tilt->setState(Tilt::LIFT_POWER);
+      break;
+    case TILT_POWER:
+      liftPoller = lift->setState(Lift::TILT_POWER);
+      tiltPoller = tilt->setState(Tilt::TILT_POWER);
       break;
   }
   return Poller(liftPoller.getIsDone(), tiltPoller.getIsDone());
