@@ -240,8 +240,19 @@ void autonomous() {
 	//Poller poller = Robot::liftTilt.setState(LiftTilt::CALIBRATE);
 	//Robot::wait(&poller);
 	while(true){
-		if(Input::controller.get_digital(DIGITAL_X) && Input::controller.get_digital(DIGITAL_A)){
+		if(Input::controller.get_digital(DIGITAL_X) && Input::controller.get_digital(DIGITAL_B)){
 				Atn::runAuton();
+		}
+
+		if(Input::controller.get_digital(DIGITAL_B)){
+				Poller* drivePoller = Robot::drive.getPoller();
+				Robot::drive.driveToPoint(20, -15, 200, false, 200, false);
+				Robot::wait(drivePoller);
+				Robot::drive.driveToPoint(0, 0, 200, true, 200, true);
+				Robot::wait(drivePoller);
+
+
+				Robot::drive.move(Input::getleftDrive(), Input::getRightDrive());
 		}
 
 		Robot::liftTilt.setState(Input::getLiftTiltState());

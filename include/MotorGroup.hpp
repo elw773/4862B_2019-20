@@ -12,7 +12,6 @@
 class MotorGroup{
   std::vector<pros::Motor*> motors;
   int slew;
-
 public:
   MotorGroup(std::vector<pros::Motor*> motors, pros::motor_brake_mode_e brakeMode = pros::E_MOTOR_BRAKE_COAST, int slew = INT32_MAX);
 

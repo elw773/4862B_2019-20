@@ -42,18 +42,20 @@ namespace Lift {
 
   class Machine : public Handleable{
     MotorGroup* liftMotors;
+    Poller poller;
   public:
+    Poller* getPoller(void);
     double stateToPos(State state);
     Machine(MotorGroup* liftMotors);
 
-    Poller setState(State state);
+    void setState(State state);
 
 
-    Poller movePower(int power);
+    void movePower(int power);
 
-    Poller calibrate(void);
+    void calibrate(void);
 
-    Poller grabStack(void);
+    void grabStack(void);
 
     void handle(void);
   };

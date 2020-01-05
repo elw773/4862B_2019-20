@@ -33,9 +33,13 @@ namespace Robot {
 
   extern Drive::Machine drive;
 
+  extern PosTrack::PosTracker posTracker;
+
   extern std::vector<Handleable*> machines;
 
   void handle(void);
+
+  void stop(void);
 
   void wait(Poller* poller);
 };

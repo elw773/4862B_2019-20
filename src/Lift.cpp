@@ -16,26 +16,26 @@ Lift::Machine::Machine(MotorGroup* liftMotors){
   this->liftMotors = liftMotors;
 };
 
-Poller Lift::Machine::setState(State state){
+void Lift::Machine::setState(State state){
   this->state = state;
   switch(state){
-    case CALIBRATE: return calibrate(); break;
-    case STOP: return liftMotors->move(0); break;
-    case GRAB_STACK: return grabStack(); break;
-    case LIFT_POWER: return movePower(Input::getLiftPower()); break;
+    case CALIBRATE: calibrate(); break;
+    case STOP: poller = liftMotors->move(0); break;
+    case GRAB_STACK: grabStack(); break;
+    case LIFT_POWER: movePower(Input::getLiftPower()); break;
     case INTAKE: holdPower = INTAKE_HOLD_POWER; break;
-    case TILT_POWER: return Poller(); break;
+    case TILT_POWER: poller = Poller(); break;
     case DROP_STACK: holdPower = DROP_STACK_HOLD_POWER; break;
   }
   double pos = stateToPos(state);
   this->currentState = [this, pos](void){
     liftMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
   };
-  return liftMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
+  poller = liftMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
 };
 
 
-Poller Lift::Machine::calibrate(void){
+void Lift::Machine::calibrate(void){
   this->state = CALIBRATE;
 
   this->currentState = [this](void){
@@ -44,8 +44,9 @@ Poller Lift::Machine::calibrate(void){
       liftMotors->setZeroPosition();
     }
   };
+
   std::function<bool(int*)> timer = Poller(300).getIsDone();
-  Poller isDone = Poller([this, timer](int* param){
+  poller = Poller([this, timer](int* param){
     if(liftMotors->getVelocity() == 0 && timer(param)){
       liftMotors->setZeroPosition();
       liftMotors->move(0);
@@ -53,18 +54,17 @@ Poller Lift::Machine::calibrate(void){
     }
     return false;
   });
-  return isDone;
 };
 
-Poller Lift::Machine::movePower(int power){
+void Lift::Machine::movePower(int power){
   state = LIFT_POWER;
   this->currentState = [this, power](void){
     liftMotors->move(power);
   };
-  return liftMotors->move(power);
+  poller = liftMotors->move(power);
 };
 
-Poller Lift::Machine::grabStack(void){
+void Lift::Machine::grabStack(void){
   this->currentState = [this](void){
     if(liftMotors->getPosition() > INTAKE_POS+DEADBAND){
       liftMotors->moveVelocity(-40, DEADBAND);
@@ -72,7 +72,7 @@ Poller Lift::Machine::grabStack(void){
       liftMotors->move(0);
     }
   };
-  return Poller(std::bind(&MotorGroup::getPosition, liftMotors), INTAKE_POS+DEADBAND);
+  poller = Poller(std::bind(&MotorGroup::getPosition, liftMotors), INTAKE_POS+DEADBAND);
 };
 
 

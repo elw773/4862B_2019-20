@@ -34,19 +34,23 @@ std::string Atn::getSelectedAutonName(void){
 void Atn::runAuton(void){
   autons.at(selectedAuton)->run(true);
 };
-
+/*
 void Atn::dropStack(void){
+  Poller* drivePoller = Robot::drive.getPoller();
+  Poller* liftTiltPoller = Robot::liftTilt.getPoller();
+  Poller timer;
+
   Robot::intake.setState(Intake::STOP);
   Robot::drive.move(0,0);
-  Poller liftTiltPoller = Robot::liftTilt.setState(LiftTilt::DROP_STACK);
-  liftTiltPoller = Robot::tilt.setState(Tilt::DROP_STACK);
-  Robot::wait(&liftTiltPoller);
-  liftTiltPoller = Poller(1000);
+  Robot::liftTilt.setState(LiftTilt::DROP_STACK);
+  Robot::tilt.setState(Tilt::DROP_STACK);
+  Robot::wait(liftTiltPoller);
+  timer = Poller(1000);
   Robot::intake.setState(Intake::STACK_OUTTAKE);
 
-  Robot::wait(&liftTiltPoller);
-  Poller drivePoller = Robot::drive.moveDistance(-10,60);
-  Robot::wait(&drivePoller);
+  Robot::wait(&timer);
+  Robot::drive.moveDistance(-10,60);
+  Robot::wait(drivePoller);
 };
 
 Atn::Auton redSmallZn(
@@ -125,11 +129,11 @@ Atn::Auton redLargeZn(
     Robot::intake.setState(Intake::INTAKE);
     Robot::wait(&drivePoller);
 
-    Poller liftTiltPoller = Robot::liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
+    Poller Robot::liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
     drivePoller = Robot::drive.moveDistance(16,120);
     Robot::wait(&drivePoller);
 
-    liftTiltPoller = Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
+    Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
 
     drivePoller = Robot::drive.moveDistance(12,150);
     Robot::wait(&drivePoller);
@@ -157,11 +161,11 @@ Atn::Auton blueLargeZn(
     Robot::intake.setState(Intake::INTAKE);
     Robot::wait(&drivePoller);
 
-    Poller liftTiltPoller = Robot::liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
+    Poller Robot::liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
     drivePoller = Robot::drive.moveDistance(16,120);
     Robot::wait(&drivePoller);
 
-    liftTiltPoller = Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
+    Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
 
     drivePoller = Robot::drive.moveDistance(12,150);
     Robot::wait(&drivePoller);
@@ -191,11 +195,11 @@ Atn::Auton redLargeNoDrop(
   	Robot::intake.setState(Intake::INTAKE);
   	Robot::wait(&drivePoller);
 
-  	Poller liftTiltPoller = Robot::liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
+  	Poller Robot::liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
   	drivePoller = Robot::drive.moveDistance(16,200);
   	Robot::wait(&drivePoller);
 
-  	liftTiltPoller = Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
+  	Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
 
 
     	drivePoller = Robot::drive.moveDistance(6,150);
@@ -219,11 +223,11 @@ Atn::Auton blueLargeNoDrop(
   	Robot::intake.setState(Intake::INTAKE);
   	Robot::wait(&drivePoller);
 
-  	Poller liftTiltPoller = Robot::liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
+  	Poller Robot::liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
   	drivePoller = Robot::drive.moveDistance(16,200);
   	Robot::wait(&drivePoller);
 
-  	liftTiltPoller = Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
+  	Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
 
 
     	drivePoller = Robot::drive.moveDistance(6,150);
@@ -243,3 +247,4 @@ Atn::Auton blueLargeNoDrop(
 );
 
 std::vector<Atn::Auton*> Atn::autons = {&redSmallZn, &blueSmallZn, &redLargeZn, &blueLargeZn, &redLargeNoDrop, &blueLargeNoDrop};
+*/

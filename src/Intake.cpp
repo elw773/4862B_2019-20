@@ -4,14 +4,14 @@ Intake::Machine::Machine(MotorGroup* intakeMotors){
   this->intakeMotors = intakeMotors;
 };
 
-Poller Intake::Machine::setState(State state){
+void Intake::Machine::setState(State state){
   int power = stateToPower(state);
   this->state = state;
 
   this->currentState = [power, this](void){
     intakeMotors->move(power);
   };
-  return Poller();
+  poller = Poller();
 }
 
 int Intake::Machine::stateToPower(State state){

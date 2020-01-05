@@ -13,6 +13,7 @@ Poller::Poller(bool b){
 };
 
 void Poller::setPoller(bool b){
+
   this->isDone = [b](int* timeInTarget){
     return b;
   };

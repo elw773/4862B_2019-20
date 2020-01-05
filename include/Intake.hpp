@@ -29,12 +29,14 @@ namespace Intake {
 
   class Machine : public Handleable{
     MotorGroup* intakeMotors;
+    Poller poller;
   public:
+    Poller* getPoller(void);
 
     int stateToPower(State state);
     Machine(MotorGroup* intakeMotors);
 
-    Poller setState(State state);
+    void setState(State state);
   };
 };
 

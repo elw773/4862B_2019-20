@@ -18,35 +18,35 @@ Tilt::Machine::Machine(MotorGroup* tiltMotors){
   this->tiltMotors = tiltMotors;
 };
 
-Poller Tilt::Machine::setState(State state){
+void Tilt::Machine::setState(State state){
   this->state = state;
 
   switch(state){
-    case CALIBRATE: return calibrate(); break;
-    case STOP: return tiltMotors->move(0); break;
-    case DROP_STACK: return dropStack(); break;
-    case LIFT_POWER: return Poller(); break;
-    case TILT_POWER: return movePower(Input::getLiftPower()); break;
+    case CALIBRATE: calibrate(); break;
+    case STOP: poller = tiltMotors->move(0); break;
+    case DROP_STACK: dropStack(); break;
+    case LIFT_POWER: poller = Poller(); break;
+    case TILT_POWER: movePower(Input::getLiftPower()); break;
 
     default:
       double pos = stateToPos(state);
       this->currentState = [this, pos](void){
         tiltMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
       };
-      return tiltMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
+      poller = tiltMotors->movePosition(pos, DEF_VELOCITY, DEADBAND);
       break;
   }
 };
 
-Poller Tilt::Machine::movePower(int power){
+void Tilt::Machine::movePower(int power){
   state = TILT_POWER;
   this->currentState = [this, power](void){
     tiltMotors->move(power);
   };
-  return tiltMotors->move(power);
+  poller = tiltMotors->move(power);
 };
 
-Poller Tilt::Machine::calibrate(void){
+void Tilt::Machine::calibrate(void){
   this->state = CALIBRATE;
 
   this->currentState = [this](void){
@@ -56,7 +56,7 @@ Poller Tilt::Machine::calibrate(void){
     }
   };
   std::function<bool(int*)> timer = Poller(300).getIsDone();
-  Poller isDone = Poller([this, timer](int* param){
+  poller = Poller([this, timer](int* param){
     if(tiltMotors->getVelocity() == 0 && timer(param)){
       tiltMotors->setZeroPosition();
       tiltMotors->move(0);
@@ -64,10 +64,9 @@ Poller Tilt::Machine::calibrate(void){
     }
     return false;
   });
-  return isDone;
 };
 
-Poller Tilt::Machine::dropStack(void){
+void Tilt::Machine::dropStack(void){
   this->state = DROP_STACK;
   this->currentState = [this](void){
       //tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND);
@@ -83,7 +82,7 @@ Poller Tilt::Machine::dropStack(void){
       }
   };
 
-  return tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND+450, 200);
+  poller = tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND+450, 200);
 };
 
 void Tilt::Machine::handle(void){

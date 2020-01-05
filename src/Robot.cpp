@@ -26,17 +26,47 @@ Lift::Machine Robot::lift(&liftMotorGroup);
 Tilt::Machine Robot::tilt(&tiltMotorGroup);
 LiftTilt::Machine Robot::liftTilt(&Robot::tilt, &Robot::lift);
 
-Drive::Machine Robot::drive(&leftMotorGroup, &rightMotorGroup);
+
+
+int straightEncPort1 = 1;
+int straightEncPort2 = 2;
+bool straightReversed = false;
+int sidewaysEncPort1 = 5;
+int sidewaysEncPort2 = 6;
+bool sidewaysReversed = false;
+int imuPort = 20;
+double straightWheelOffset = -1.5;
+double sidewaysWheelOffset = 0;
+double straightTicksToInches = 100.0/4085.0;
+double sidewaysTicsToInches = 100.0/4085.0;
+
+PosTrack::PosTracker Robot::posTracker(straightEncPort1, straightEncPort2, straightReversed,
+            sidewaysEncPort1, sidewaysEncPort2, sidewaysReversed,
+            imuPort,
+            straightWheelOffset,
+            sidewaysWheelOffset,
+            straightTicksToInches,
+            sidewaysTicsToInches);
+
+Drive::Machine Robot::drive(&leftMotorGroup, &rightMotorGroup, &posTracker);
 
 std::vector<Handleable*> Robot::machines = {&Robot::intake, &Robot::liftTilt, &Robot::lift, &Robot::tilt, &Robot::drive};
 
-
+void Robot::stop(void){
+  for(int i = 0; i < 8; i++){
+    motors[i]->move(0);
+  }
+};
 
 void Robot::handle(void){
   drive.handle();
   liftTilt.handle();
   intake.handle();
+  posTracker.update();
   Display::update();
+  if(Input::controller.get_digital(DIGITAL_X) && Input::controller.get_digital(DIGITAL_A)){
+    stop();
+  }
 
   pros::delay(10);
 };

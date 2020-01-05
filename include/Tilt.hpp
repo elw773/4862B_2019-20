@@ -36,16 +36,18 @@ namespace Tilt{
 
   class Machine : public Handleable{
     MotorGroup* tiltMotors;
+    Poller poller;
   public:
+    Poller* getPoller(void);
     double stateToPos(State state);
 
     Machine(MotorGroup* tiltMotors);
 
-    Poller movePower(int power);
-    Poller setState(State state);
+    void movePower(int power);
+    void setState(State state);
 
-    Poller calibrate(void);
-    Poller dropStack(void);
+    void calibrate(void);
+    void dropStack(void);
 
     void handle(void);
   };

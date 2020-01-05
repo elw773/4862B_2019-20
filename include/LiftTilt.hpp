@@ -27,10 +27,12 @@ namespace LiftTilt {
   class Machine : public Handleable{
     Tilt::Machine* tilt;
     Lift::Machine* lift;
+    Poller poller;
   public:
+    Poller* getPoller(void);
     Machine(Tilt::Machine* tilt, Lift::Machine* lift);
 
-    Poller setState(State state);
+    void setState(State state);
 
     void handle(void);
   };
