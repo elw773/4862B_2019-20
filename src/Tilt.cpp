@@ -95,3 +95,8 @@ void Tilt::Machine::handle(void){
 
   }
 };
+
+
+Poller* Tilt::Machine::getPoller(){
+  return &poller;
+};

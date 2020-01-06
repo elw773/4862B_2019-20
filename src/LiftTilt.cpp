@@ -68,3 +68,9 @@ void LiftTilt::Machine::handle(void){
   lift->handle();
   tilt->handle();
 };
+
+
+
+Poller* LiftTilt::Machine::getPoller(){
+  return &poller;
+};

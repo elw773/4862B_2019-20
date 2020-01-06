@@ -14,6 +14,12 @@ void Intake::Machine::setState(State state){
   poller = Poller();
 }
 
+
+Poller* Intake::Machine::getPoller(){
+  return &poller;
+};
+
+
 int Intake::Machine::stateToPower(State state){
   switch(state){
     case STACK_OUTTAKE: return STACK_OUTTAKE_POWER;

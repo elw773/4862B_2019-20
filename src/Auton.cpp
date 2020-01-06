@@ -52,9 +52,9 @@ void Atn::dropStack(void){
   Robot::drive.moveDistance(-10,60);
   Robot::wait(drivePoller);
 };
-
+*/
 Atn::Auton redSmallZn(
-  [](bool side){
+  [](bool side){/*
     Robot::lift.setState(Lift::LOW_TOWER);
     Poller liftPoller = Poller(1000);
     Robot::lift.setState(Lift::INTAKE);
@@ -82,12 +82,12 @@ Atn::Auton redSmallZn(
     drivePoller = Robot::drive.moveDistance(-1.5,100);
   	Robot::wait(&drivePoller);
 
-    Atn::dropStack();
+    Atn::dropStack();*/
   },
   "redSmallZn"
 );
 
-
+/*
 Atn::Auton blueSmallZn(
   [](bool side){
     Robot::lift.setState(Lift::LOW_TOWER);
@@ -245,6 +245,5 @@ Atn::Auton blueLargeNoDrop(
   },
   "blueLarge5"
 );
-
-std::vector<Atn::Auton*> Atn::autons = {&redSmallZn, &blueSmallZn, &redLargeZn, &blueLargeZn, &redLargeNoDrop, &blueLargeNoDrop};
 */
+std::vector<Atn::Auton*> Atn::autons = {&redSmallZn};

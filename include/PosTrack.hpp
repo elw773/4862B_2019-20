@@ -3,25 +3,26 @@
 
 #include "api.h"
 
-struct PolarPos{
-  double s;
+struct Polar{
+  double m;
+  double phi;
   double a;
 };
 
-struct VectorPos{
-  double x;
-  double y;
-};
-
-struct Pose{
+struct Vector{
   double x;
   double y;
   double a;
+};
+
+struct Line{
+  Vector a;
+  Vector b;
 };
 
 namespace PosTrack{
     struct Condition{
-      Pose robotPose;
+      Vector robotVector;
       double straightDist;
       double sidewaysDist;
     };
@@ -37,10 +38,13 @@ namespace PosTrack{
     double straightTicksToInches;
     double sidewaysTicsToInches;
 
-    Condition posCondition;
+    Condition currCondition;
 
-    PolarPos localStraightMovement;
-    PolarPos localSidewaysMovement;
+    Polar localStraightMovement;
+    Polar localSidewaysMovement;
+
+    Vector velocity;
+    long lastTime;
   public:
     PosTracker( int straightEncPort1, int straightEncPort2, bool straightReversed,
                 int sidewaysEncPort1, int sidewaysEncPort2, bool sidewaysReversed,
@@ -57,7 +61,9 @@ namespace PosTrack{
 
     double getSidewaysDist(void);
 
-    Pose* getPose(void);
+    Vector* getVector(void);
+
+    Vector* getVelocity(void);
 
     void update(void); // updates the position of the robot
 
@@ -65,25 +71,24 @@ namespace PosTrack{
   };
 }
 
-double calcDist(VectorPos a, VectorPos b);
+Vector polarToVector(Polar polar);
 
-double calcDist(Pose a, VectorPos b);
+Polar vectorToPolar(Vector vector);
 
-double calcDist(Pose a, Pose b);
+double calcDist(Vector a, Vector b);
 
 double calcDist(double xa, double ya, double xb, double yb);
 
-double calcAngle(VectorPos a, VectorPos b);
-
-double calcAngle(Pose a, VectorPos b);
-
-double calcAngle(Pose a, Pose b);
+double calcAngle(Vector a, Vector b);
 
 double calcAngle(double xa, double ya, double xb, double yb);
 
+double calcAngle(Line line);
 
-void addPolarToPose(Pose* pose, PolarPos polar);
+double calcSlope(Line line);
 
-Pose vectorPosToPose(VectorPos pos, double angle);
+double calcSlope(double angle);
+
+void addPolarToVector(Vector* Vector, Polar polar);
 
 #endif //_POS_TRACK_HPP_

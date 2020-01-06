@@ -83,3 +83,8 @@ void Lift::Machine::handle(void){
     this->currentState();
   }
 };
+
+
+Poller* Lift::Machine::getPoller(){
+  return &poller;
+};
