@@ -11,8 +11,8 @@ pros::Motor rightMotor1(2,GEARSET_600_RPM, false);
 pros::Motor rightMotor2(3, GEARSET_600_RPM, false);
 pros::Motor tiltMotor(9, GEARSET_100_RPM, false);
 pros::Motor liftMotor(8, GEARSET_100_RPM, false);
-pros::Motor intakeMotor1(11, GEARSET_200_RPM, false);
-pros::Motor intakeMotor2(13, GEARSET_200_RPM, true);
+pros::Motor intakeMotor1(13, GEARSET_200_RPM, false);
+pros::Motor intakeMotor2(15, GEARSET_200_RPM, true);
 
 std::vector<pros::Motor*> Robot::motors = {&leftMotor1, &leftMotor2, &rightMotor1, &rightMotor2, &tiltMotor, &liftMotor, &intakeMotor1, &intakeMotor2};
 std::vector<std::string> Robot::motorNames = {"left1", "left2", "right1", "right2", "tilt", "lift", "intake1", "intake2"};

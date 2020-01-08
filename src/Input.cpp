@@ -3,6 +3,7 @@
 pros::Controller Input::controller(pros::E_CONTROLLER_MASTER);
 
 bool Input::shldrBtn = false;
+bool Input::dPadBtn = false;
 
 LiftTilt::State Input::getLiftTiltState(void){
 
@@ -44,6 +45,9 @@ LiftTilt::State Input::getLiftTiltState(void){
   }
 
   if(rightDpad){
+    if(liftTiltState == LiftTilt::DROP_STACK){
+      return LiftTilt::ALMOST_STACK;
+    }
     return LiftTilt::DROP_STACK;
   }
 

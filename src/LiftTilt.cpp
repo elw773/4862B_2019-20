@@ -11,6 +11,9 @@ void LiftTilt::Machine::setState(State state){
   Poller liftPoller;
   Poller tiltPoller;
   switch(state){
+    case ALMOST_STACK:
+      lift->setState(Lift::DROP_STACK);
+      tilt->setState(Tilt::ALMOST_STACK);
     case DEPLOY:
       lift->setState(Lift::DEPLOY);
       tilt->setState(Tilt::BOT_INTAKE);

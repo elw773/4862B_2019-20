@@ -9,7 +9,7 @@ void Intake::Machine::setState(State state){
     int goal = intakeMotors->getPosition() - (state==State::PREP_CUBE?500:2000);
     poller = Poller(false);
     this->currentState = [goal, this](void){
-      intakeMotors->movePosition(goal);
+      intakeMotors->movePosition(goal, 200);
       if(abs(goal - intakeMotors->getPosition()) < 100){
         poller.setPoller(true);
       }

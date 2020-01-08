@@ -20,8 +20,10 @@ namespace Tilt{
   const double MID_INTAKE_POS = 2000;
   const double HIGH_INTAKE_POS = 4400;
   const double DROP_STACK_POS = 9000;
+  const double ALMOST_STACK_POS = 8000;
 
   enum State {
+    ALMOST_STACK = 6,
     TOWER = 5,
     DROP_STACK = 4,
     HIGH_INTAKE = 3,

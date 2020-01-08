@@ -7,6 +7,7 @@ double Tilt::Machine::stateToPos(State state){
     case BOT_INTAKE: return BOT_INTAKE_POS;
     case MID_INTAKE: return MID_INTAKE_POS;
     case HIGH_INTAKE: return HIGH_INTAKE_POS;
+    case ALMOST_STACK: return ALMOST_STACK_POS;
     case DROP_STACK: return DROP_STACK_POS;
     case STOP: return BOT_INTAKE_POS;
     case CALIBRATE: return -1;
@@ -72,7 +73,8 @@ void Tilt::Machine::dropStack(void){
       //tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND);
       double error = DROP_STACK_POS - tiltMotors->getPosition();
       if(error > DEADBAND){
-        int velocity = (int)(error * 0.037);
+        // previously 0.037
+        int velocity = (int)(error * 0.04);
         if(velocity > SLOW_VELOCITY){
           velocity = velocity;
         }

@@ -37,7 +37,7 @@ void Atn::runAuton(void){
   autons.at(selectedAuton)->run(true);
 };
 
-void dropStack(void){
+void Atn::dropStack(void){
   Poller* drivePoller = drive.getPoller();
   Poller* liftTiltPoller = liftTilt.getPoller();
   Poller timer;
@@ -54,7 +54,11 @@ void dropStack(void){
 };
 
 Atn::Auton redSmallZn(
-  [](bool side){Poller* drivePoller = drive.getPoller();
+  [](bool side){
+    Poller* drivePoller = drive.getPoller();
+    Poller* liftTiltPoller = liftTilt.getPoller();
+    Poller timer;
+
     intake.setState(Intake::INTAKE);
     drive.driveToPoint(40, 0, 170, Drive::StopType::SOFT_STOP, false);
     wait(drivePoller);
@@ -63,6 +67,8 @@ Atn::Auton redSmallZn(
 
     drive.moveDistance(7, 200);
     wait(drivePoller);
+
+    liftTilt.setState(LiftTilt::HIGH_INTAKE);
 
     drive.driveToPoint(20, 0, 220, Drive::StopType::SOFT_STOP, true);
     wait(drivePoller);
@@ -84,27 +90,33 @@ Atn::Auton redSmallZn(
 
 Atn::Auton blueSmallZn(
   [](bool side){
-  intake.setState(Intake::INTAKE);
-  drive.driveToPoint(40, 0, 170, Drive::StopType::SOFT_STOP, false);
-  wait(drivePoller);
-  drive.turnToPoint(63, 10, 200, Drive::StopType::SOFT_STOP);
-  wait(drivePoller);
+    Poller* drivePoller = drive.getPoller();
+    Poller* liftTiltPoller = liftTilt.getPoller();
+    Poller timer;
 
-  drive.moveDistance(7, 200);
-  wait(drivePoller);
+    intake.setState(Intake::INTAKE);
+    drive.driveToPoint(40, 0, 170, Drive::StopType::SOFT_STOP, false);
+    wait(drivePoller);
+    drive.turnToPoint(63, 10, 200, Drive::StopType::SOFT_STOP);
+    wait(drivePoller);
 
-  drive.driveToPoint(20, 0, 220, Drive::StopType::SOFT_STOP, true);
-  wait(drivePoller);
+    drive.moveDistance(7, 200);
+    wait(drivePoller);
 
-  drive.turnToAngle(degreeToRad(-130)	, 200, Drive::StopType::SOFT_STOP);
-  wait(drivePoller);
+    liftTilt.setState(LiftTilt::HIGH_INTAKE);
 
-  drive.moveDistance(10, 150);
-  wait(drivePoller);
+    drive.driveToPoint(20, 0, 220, Drive::StopType::SOFT_STOP, true);
+    wait(drivePoller);
 
-  intake.setState(Intake::STOP);
+    drive.turnToAngle(degreeToRad(-130)	, 200, Drive::StopType::SOFT_STOP);
+    wait(drivePoller);
 
-  Atn::dropStack();
+    drive.moveDistance(10, 150);
+    wait(drivePoller);
+
+    intake.setState(Intake::STOP);
+
+    Atn::dropStack();
   },
   "blueSmallZn"
 );

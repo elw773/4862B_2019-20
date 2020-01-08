@@ -10,6 +10,7 @@
 
 namespace LiftTilt {
   enum State{
+    ALMOST_STACK = 10,
     DEPLOY = 9,
     PRE_TWO_GRAB = 8,
     GRAB_STACK = 7,

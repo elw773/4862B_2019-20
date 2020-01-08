@@ -7,6 +7,7 @@
 
 namespace Input{
   extern bool shldrBtn;
+  extern bool dPadBtn;
 
   extern pros::Controller controller;
 
