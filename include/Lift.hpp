@@ -8,7 +8,7 @@
 
 namespace Lift {
   const int CALIBRATE_OFFSET = 30;
-  const int DEADBAND = 20;
+  const int DEADBAND = 60;
   const int DEF_VELOCITY = 90;
 
 
@@ -16,13 +16,15 @@ namespace Lift {
   const int INTAKE_HOLD_POWER = 0;
 
   const double PRE_TWO_GRAB_POS = 700;
-  const double LOW_TOWER_POS = 1990;
-  const double MID_TOWER_POS = 2470;
+  const double LOW_TOWER_POS = 1700;
+  const double MID_TOWER_POS = 2300;
   const double INTAKE_POS = 0;
+  const double DEPLOY_POS = 500;
 
   extern int holdPower;
 
   enum State{
+    DEPLOY = 7,
     PRE_TWO_GRAB = 6,
     GRAB_STACK = 5,
     LOW_TOWER = 4,

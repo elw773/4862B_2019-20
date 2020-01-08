@@ -27,7 +27,7 @@ void Display::update(void){
 
   pros::lcd::print(0, "Auton: %s", Atn::getSelectedAutonName().c_str());
   pros::lcd::print(1, "Angle: %5f ( %5f )", Robot::posTracker.getAngle(), Robot::posTracker.getAngle() / 0.0174532925);
-  pros::lcd::print(2, "Str:%5f Sw: %5f", Robot::posTracker.getStraightDist(),  Robot::posTracker.getSidewaysDist());
+  pros::lcd::print(2, "LoopTime: %d", Robot::handleLoopTime);
   pros::lcd::print(3, "X:%5f Y: %5f", Robot::posTracker.getVector()->x,  Robot::posTracker.getVector()->y);
   pros::lcd::print(4, "liftTilt State: %d", Robot::liftTilt.getState());
   pros::lcd::print(5, "Lift Pos:%f State: %d", Robot::liftMotorGroup.getPosition(), Robot::lift.getState());

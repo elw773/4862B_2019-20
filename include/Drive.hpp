@@ -44,15 +44,21 @@ namespace Drive {
 
     void move(int left, int right);
 
-    void moveDistance(double distance, int velocity, double range = 0.5, int timeout = 200);
+    void slewVelocity(int left, int right);
+
+    void moveDistance(double distance, int velocity, double range = 1, int timeout = 0);
 
     void moveAngle(double angle, int velocity, double range = 5, int timeout = 200);
 
-    void driveToPoint(double xGoal, double yGoal, int velocity, StopType stopType, int maxCorrection, bool reverse, double range = 0.5);
+    void driveToPointLine(double xGoal, double yGoal, int velocity, StopType stopType, bool reverse, double range = 0.5);
 
     void driveToPointLine(double xStart, double yStart, double xGoal, double yGoal, int velocity, StopType stopType, bool reverse, double range = 0.5);
 
-    void turnToPoint(double xGoal, double yGoal, int velocity, StopType stopType, double range = degreeToRad(3.0));
+    void driveToPoint(double xGoal, double yGoal, int velocity, StopType stopType, bool reverse, double range = 0.5);
+
+    void turnToPoint(double xGoal, double yGoal, int velocity, StopType stopType, double range = degreeToRad(1));
+
+    void turnToAngle(double aGoal, int velocity, StopType stopType, double range = degreeToRad(1));
 
     double getDistance();
 

@@ -72,9 +72,9 @@ void Tilt::Machine::dropStack(void){
       //tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND);
       double error = DROP_STACK_POS - tiltMotors->getPosition();
       if(error > DEADBAND){
-        int velocity = (int)(error * 0.023);
+        int velocity = (int)(error * 0.037);
         if(velocity > SLOW_VELOCITY){
-          velocity = SLOW_VELOCITY;
+          velocity = velocity;
         }
         tiltMotors->moveVelocity(velocity);
       } else {
@@ -82,7 +82,7 @@ void Tilt::Machine::dropStack(void){
       }
   };
 
-  poller = tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND+450, 200);
+  poller = tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND+450);
 };
 
 void Tilt::Machine::handle(void){

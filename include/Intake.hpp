@@ -16,8 +16,9 @@ namespace Intake {
   const int STACK_OUTTAKE_POWER = -100;
 
   enum State {
+    OUTTAKE_CUBE = -4;
+    PREP_CUBE = -3;
     STACK_OUTTAKE = -2,
-
     OUTTAKE = -1,
     STOP = 0,
     HOLD = 1,

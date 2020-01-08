@@ -3,10 +3,12 @@
 const double aIntegralLimit = 40;
 const double aErrorIntegralRange = degreeToRad(30);
 const double kIa = 3;
-const double kPa = 200;
+const double kPa = 300;
 const double kPsl = 25;
+const double kPline = 17;
 const double noTurnDist = 7;
-
+const double decelK = 2;
+const double decelKa = degreeToRad(10);
 
 Drive::Machine::Machine(MotorGroup* leftMotors, MotorGroup* rightMotors, PosTrack::PosTracker* posTracker){
   this->leftMotors = leftMotors;
@@ -26,114 +28,54 @@ void Drive::Machine::move(int left, int right){
 void Drive::Machine::moveDistance(double distance, int velocity, double range, int timeout){
   this->state = DISTANCE;
   double tickGoal = distance * distanceToTicks;
-  leftMotors->setZeroPosition();
-  rightMotors->setZeroPosition();
+  int leftGoal = tickGoal + leftMotors->getPosition();
+  int rightGoal = tickGoal + rightMotors->getPosition();
+  poller = Poller(false);
 
-  this->currentState = [tickGoal, velocity, this](void){
-    leftMotors->movePosition(tickGoal, velocity);
-    rightMotors->movePosition(tickGoal, velocity);
+  this->currentState = [leftGoal, rightGoal, velocity, range, this](void){
+    slewVelocity(
+      limit(kPsl * (leftGoal - leftMotors->getPosition()) * ticksToDistance, velocity),
+      limit(kPsl * (rightGoal - rightMotors->getPosition()) * ticksToDistance, velocity)
+    );
+    if(abs(leftGoal - leftMotors->getPosition()) < range){
+      poller.setPoller(true);
+      slewVelocity(0,0);
+    }
   };
 
-  poller = Poller(std::bind(&Machine::getDistance, this), distance, range, timeout);
 };
 
 void Drive::Machine::moveAngle(double angle, int velocity, double range, int timeout){
   this->state = ANGLE;
   double tickGoal = angle*angleToTicks;
-  leftMotors->setZeroPosition();
-  rightMotors->setZeroPosition();
+  int leftGoal = (tickGoal * -0.5) + leftMotors->getPosition();
+  int rightGoal = (tickGoal * 0.5) + rightMotors->getPosition();
+  poller = Poller(false);
 
-  this->currentState = [tickGoal, velocity, this](void){
-    rightMotors->movePosition(tickGoal * 0.5, velocity);
-    leftMotors->movePosition(tickGoal * -0.5, velocity);
+  this->currentState = [leftGoal, rightGoal, velocity, range, this](void){
+    rightMotors->movePosition(leftGoal, velocity);
+    leftMotors->movePosition(rightGoal, velocity);
+    if(abs(leftGoal - leftMotors->getPosition()) < range){
+      poller.setPoller(true);
+    }
   };
-
-  poller = Poller(std::bind(&Machine::getAngle, this), angle, range, timeout);
 };
 
 
+void Drive::Machine::slewVelocity(int left, int right){
+  int leftVelDelta = limit(left - leftMotors->getTargetVelocity(), 3);
+  leftMotors->moveVelocity(leftMotors->getTargetVelocity() + leftVelDelta);
 
+  int rightVelDelta = limit(right - rightMotors->getTargetVelocity(), 3);
+  rightMotors->moveVelocity(rightMotors->getTargetVelocity() + rightVelDelta);
+};
 
-void Drive::Machine::driveToPoint(double xGoal, double yGoal, int velocity, StopType stopType, int maxCorrection, bool reverse, double range){
-  this->state = DRIVE_TO_POINT;
-  poller = Poller(false);
-  this->currentState = [xGoal, yGoal, velocity, stopType, maxCorrection, range, reverse, this]{
-
-    Vector goalPos;
-    goalPos.x = xGoal;
-    goalPos.y = yGoal;
-    Vector robotVector = *posTracker->getVector();
-    double slError = calcDist(robotVector, goalPos);
-
-    int leftVel, rightVel;
-    if(stopType == StopType::DRIVE_THROUGH){
-      leftVel = velocity;
-      rightVel = velocity;
-    } else {
-      leftVel = limit(slError * kPsl, velocity);
-      rightVel = limit(slError * kPsl, velocity);
-    }
-
-    double aError = calcAngle(robotVector, goalPos) - robotVector.a;
-    if(reverse){
-      aError -= M_PI * sign(aError); // add 180 degrees if the robot should go backwards
-    }
-    aError = clipAngle(aError);
-
-
-    double straightDist = slError * cos(aError);
-    double sidewaysDist = slError * sin(aError);
-    double correction = fabs(limit(aError * kPa, maxCorrection));
-    double otherCorrection = correction;
-    if(fabs(straightDist) > 3 || fabs(sidewaysDist) > 3.5){
-
-      if(fabs(aError) < 1.04719755){ // only turn completely if too far off in angle
-        otherCorrection = 0;
-
-      } else {
-        leftVel = 0;
-        rightVel = 0;
-      }
-
-      switch(sign(aError)){
-        case 1:
-          leftVel -= correction;
-          rightVel += otherCorrection;
-          break;
-        case -1:
-          rightVel -= correction;
-          leftVel += otherCorrection;
-          break;
-        default:
-          break;
-        }
-      }
-
-      int dirrection = reverse?-1:1;
-
-      int leftVelDelta = limit(leftVel - leftMotors->getTargetVelocity(), 3);
-      leftMotors->moveVelocity((leftMotors->getTargetVelocity() + leftVelDelta) * dirrection);
-
-      int rightVelDelta = limit(rightVel - rightMotors->getTargetVelocity(), 3);
-      rightMotors->moveVelocity((rightMotors->getTargetVelocity() + rightVelDelta) * dirrection);
-
-
-      if((fabs(straightDist) < range || fabs(aError) > (M_PI / 2)) && fabs(sidewaysDist) < 4){ // if close or overshot, stop
-        poller.setPoller(true);
-
-        if(stopType == StopType::SOFT_STOP){
-          leftMotors->move(0);
-          rightMotors->move(0);
-        } else if(stopType == StopType::HARD_STOP){
-          leftMotors->moveVelocity(0);
-          rightMotors->moveVelocity(0);
-        }
-      }
-  };
+void Drive::Machine::driveToPointLine(double xGoal, double yGoal, int velocity, StopType stopType, bool reverse, double range){
+  driveToPointLine(posTracker->getVector()->x, posTracker->getVector()->y, xGoal, yGoal, velocity, stopType, reverse);
 }
 
 Vector Drive::calculateLookaheadPoint(Line line, Vector robotPos){
-  double lookDist = 7;
+  double lookDist = 9;
   if(fabs(calcDist(line.b, robotPos)) < lookDist){
     return line.b;
   } else {
@@ -193,18 +135,23 @@ void Drive::Machine::driveToPointLine(double xStart, double yStart, double xGoal
 
 
     int leftVel, rightVel;
+    leftVel = rightVel;
 
+    leftVel = rightVel = fabs(limit(straightDistToGoal * kPsl, velocity));
 
-    leftVel = rightVel = velocity;
+    if(fabs(aErrorToLook) < degreeToRad(10) ){
+      if(stopType == StopType::DRIVE_THROUGH){
+        leftVel = rightVel = velocity;
+      }
+    }
 
     if(deccelZone){
       lookaheadPoint = line.b;
-      if(stopType == StopType::SOFT_STOP){
-        leftVel = rightVel = fabs(limit(straightDistToGoal * kPsl, velocity));
-      }
     } else {
-      deccelZone = fabs(straightDistToGoal) < fabs((velocityPolar.m * 2));
+      deccelZone = fabs(straightDistToGoal) < fabs((velocityPolar.m * decelK));
     }
+
+
 
     int correction = 0;
 
@@ -212,6 +159,7 @@ void Drive::Machine::driveToPointLine(double xStart, double yStart, double xGoal
     if(reverse){
       dirrection = -1;
     }
+    pros::lcd::print(7, "l: %5f, %5d", fabs(limit(straightDistToGoal * kPsl, velocity)), leftVel);
 
     if(fabs(distErrorToGoal) > noTurnDist && (fabs(straightDistToGoal) > noTurnDist || fabs(sidewaysDistToGoal) > noTurnDist)){
       aIntegral = limit(aIntegral, aIntegralLimit);
@@ -241,12 +189,94 @@ void Drive::Machine::driveToPointLine(double xStart, double yStart, double xGoal
     rightVel *= dirrection;
     leftVel *= dirrection;
 
-    int leftVelDelta = limit(leftVel - leftMotors->getTargetVelocity(), 3);
-    leftMotors->moveVelocity((leftMotors->getTargetVelocity() + leftVelDelta));
+    slewVelocity(leftVel, rightVel);
 
-    int rightVelDelta = limit(rightVel - rightMotors->getTargetVelocity(), 3);
-    rightMotors->moveVelocity((rightMotors->getTargetVelocity() + rightVelDelta));
-    pros::lcd::print(7, "l: %5f, %5d", radToDegree(aErrorToLook), aIntegral * kIa);
+
+    if((fabs(straightDistToGoal) < range || fabs(aErrorToGoal) > (M_PI / 2)) && fabs(distErrorToGoal) < noTurnDist){ // if within 5 inch circle of point and cant get any much closer
+      poller.setPoller(true);
+      if(stopType == StopType::HARD_STOP){
+        leftMotors->moveVelocity(0);
+        rightMotors->moveVelocity(0);
+      }
+    }
+  };
+};
+
+
+void Drive::Machine::driveToPoint(double xGoal, double yGoal, int velocity, StopType stopType, bool reverse, double range){
+  this->state = DRIVE_TO_POINT;
+  poller = Poller(false);
+  deccelZone = false;
+
+  Vector goal;
+  goal.x = xGoal;
+  goal.y = yGoal;
+  deccelZone = false;
+
+  this->currentState = [goal, velocity, stopType, reverse, range, this]{
+    Vector robotVector = *posTracker->getVector();
+
+    double distErrorToGoal = calcDist(robotVector, goal);
+    double aErrorToGoal = calcAngle(robotVector, goal)  - robotVector.a;
+    if(reverse){
+      aErrorToGoal -= M_PI * sign(aErrorToGoal); // add 180 degrees if the robot should go backwards
+    }
+    aErrorToGoal = clipAngle(aErrorToGoal);
+    double straightDistToGoal = distErrorToGoal * cos(aErrorToGoal);
+    double sidewaysDistToGoal = distErrorToGoal * sin(aErrorToGoal);
+
+    Polar velocityPolar = vectorToPolar(*posTracker->getVelocity());
+
+
+
+    int leftVel, rightVel;
+    leftVel = rightVel = velocity;
+
+    if(deccelZone){
+      if(stopType == StopType::SOFT_STOP){
+        leftVel = rightVel = fabs(limit(straightDistToGoal * kPsl, velocity));
+      }
+    } else {
+      deccelZone = fabs(straightDistToGoal) < fabs((velocityPolar.m * decelK));
+    }
+
+    int correction = 0;
+
+    int dirrection = 1;
+    if(reverse){
+      dirrection = -1;
+    }
+    pros::lcd::print(7, "l: %5f, %5d", fabs(limit(straightDistToGoal * kPsl, velocity)), leftVel);
+
+    if(fabs(distErrorToGoal) > noTurnDist && (fabs(straightDistToGoal) > noTurnDist || fabs(sidewaysDistToGoal) > noTurnDist)){
+      aIntegral = limit(aIntegral, aIntegralLimit);
+      if(fabs(aErrorToGoal) > aErrorIntegralRange || sign(aErrorToGoal) != sign(aIntegral)){
+        aIntegral = 0;
+      }
+      correction = fabs((aErrorToGoal * kPa) + (aIntegral * kIa));
+      aIntegral += aErrorToGoal;
+
+      switch(sign(aErrorToGoal) * dirrection){
+        case 1:
+          leftVel -= correction;
+          break;
+        case -1:
+          rightVel -= correction;
+          break;
+        default:
+          break;
+      }
+    } else {
+      aIntegral = 0;
+    }
+
+
+
+
+    rightVel *= dirrection;
+    leftVel *= dirrection;
+
+    slewVelocity(leftVel, rightVel);
 
 
     if((fabs(straightDistToGoal) < range || fabs(aErrorToGoal) > (M_PI / 2)) && fabs(distErrorToGoal) < noTurnDist){ // if within 5 inch circle of point and cant get any much closer
@@ -263,29 +293,87 @@ void Drive::Machine::driveToPointLine(double xStart, double yStart, double xGoal
 
 
 void Drive::Machine::turnToPoint(double xGoal, double yGoal, int velocity, StopType stopType, double range){
-  /*
   this->state = TURN_TO_POINT;
   poller = Poller(false);
-  this->currentState = [xGoal, yGoal, velocity, stop, range, this]{
+  deccelZone = false;
+
+  this->currentState = [xGoal, yGoal, velocity, stopType, range, this]{
     Vector goalPos;
     goalPos.x = xGoal;
     goalPos.y = yGoal;
     Vector robotVector = *posTracker->getVector();
 
-    double aError = calcAngle(robotVector, goalPos) - robotVector.a;
+    double aError = clipAngle(calcAngle(robotVector, goalPos) - robotVector.a);
 
     int rightVel, leftVel;
 
-    int leftVel, rightVel;
-    if(stop){
-      leftVel = limit(slError * kPsl, velocity);
-      rightVel = limit(slError * kPsl, velocity);
-    } else {
-      leftVel = velocity;
-      rightVel = velocity;
+    int pow;
+
+    aIntegral = limit(aIntegral, aIntegralLimit);
+    if(fabs(aError) > aErrorIntegralRange || sign(aError) != sign(aIntegral)){
+      aIntegral = 0;
     }
 
-  };*/
+    pow = limit((aError * kPa) + (aIntegral * kIa), velocity);
+    aIntegral += aError;
+
+
+    leftVel = -0.5 * pow;
+    rightVel = 0.5 * pow;
+
+    slewVelocity(leftVel, rightVel);
+
+    if(fabs(aError) < range){
+      poller.setPoller(true);
+      if(stopType == StopType::HARD_STOP){
+        leftMotors->moveVelocity(0);
+        rightMotors->moveVelocity(0);
+      }
+    }
+    pros::lcd::print(7, "l: %5f, %5f", aError, clipAngle(calcAngle(robotVector, goalPos)));
+
+
+  };
+};
+
+void Drive::Machine::turnToAngle(double aGoal, int velocity, StopType stopType, double range){
+  this->state = TURN_TO_POINT;
+  poller = Poller(false);
+  deccelZone = false;
+  this->currentState = [aGoal, velocity, stopType, range, this]{
+    Vector robotVector = *posTracker->getVector();
+
+    double aError = aGoal - robotVector.a;
+
+    int rightVel, leftVel;
+
+    int pow;
+
+    aIntegral = limit(aIntegral, aIntegralLimit);
+    if(fabs(aError) > aErrorIntegralRange || sign(aError) != sign(aIntegral)){
+      aIntegral = 0;
+    }
+
+    pow = limit((aError * kPa) + (aIntegral * kIa), velocity);
+    aIntegral += aError;
+
+
+    leftVel = -0.5 * pow;
+    rightVel = 0.5 * pow;
+
+    slewVelocity(leftVel, rightVel);
+    pros::lcd::print(7, "l: %5f, %5d", radToDegree(aError), pow);
+
+
+    if(fabs(aError) < range){
+      poller.setPoller(true);
+      if(stopType == StopType::HARD_STOP){
+        leftMotors->moveVelocity(0);
+        rightMotors->moveVelocity(0);
+      }
+    }
+
+  };
 };
 
 double Drive::Machine::getDistance(){

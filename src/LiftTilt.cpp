@@ -11,6 +11,10 @@ void LiftTilt::Machine::setState(State state){
   Poller liftPoller;
   Poller tiltPoller;
   switch(state){
+    case DEPLOY:
+      lift->setState(Lift::DEPLOY);
+      tilt->setState(Tilt::BOT_INTAKE);
+      break;
     case PRE_TWO_GRAB:
       lift->setState(Lift::PRE_TWO_GRAB);
       tilt->setState(Tilt::BOT_INTAKE);

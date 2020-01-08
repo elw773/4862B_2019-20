@@ -260,9 +260,7 @@ void autonomous() {
 		}
 
 		if(Input::controller.get_digital(DIGITAL_B)){
-				Poller* drivePoller = Robot::drive.getPoller();
-				Robot::drive.driveToPointLine(0, 0, 80, 30, 350, Drive::StopType::SOFT_STOP, false);
-				Robot::wait(drivePoller);
+			
 		}
 
 		Robot::liftTilt.setState(Input::getLiftTiltState());

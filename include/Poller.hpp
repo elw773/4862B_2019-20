@@ -24,9 +24,9 @@ public:
 
   Poller(std::function<bool(void)> isDone);
 
-  Poller(std::function<int(void)> value, int target, int range, int timeout = 0);
+  Poller(std::function<int(void)> value, int target, int range);
 
-  Poller(std::function<double(void)> value, double target, double range, int timeout = 0);
+  Poller(std::function<double(void)> value, double target, double range);
 
   Poller(std::function<int(void)> value, int target);
 

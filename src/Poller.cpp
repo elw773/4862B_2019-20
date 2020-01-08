@@ -36,16 +36,18 @@ Poller::Poller(std::function<bool(void)> isDone){
   };
 };
 
-Poller::Poller(std::function<int(void)> value, int target, int range, int timeout){
-  this->isDone = [value, target, range, timeout](int* timeInTarget){
+Poller::Poller(std::function<int(void)> value, int target, int range){
+  this->isDone = [value, target, range](int* timeInTarget){
       if(abs(target-value()) < range){
+        /*
         if(*timeInTarget == NOT_IN_TARGET){ // if was not in target
           *timeInTarget = pros::millis();
         }
 
         if((pros::millis() - *timeInTarget) > timeout){ // if was in target loger than timeout
           return true;
-        }
+        }*/
+        return true;
       } else {
         *timeInTarget = NOT_IN_TARGET;
       }
@@ -53,16 +55,18 @@ Poller::Poller(std::function<int(void)> value, int target, int range, int timeou
   };
 };
 
-Poller::Poller(std::function<double(void)> value, double target, double range, int timeout){
-  this->isDone = [value, target, range, timeout](int* timeInTarget){
+Poller::Poller(std::function<double(void)> value, double target, double range){
+  this->isDone = [value, target, range](int* timeInTarget){
       if(fabs(target-value()) < range){
+        /*
         if(*timeInTarget == NOT_IN_TARGET){ // if was not in target
           *timeInTarget = pros::millis();
         }
 
         if((pros::millis() - *timeInTarget) > timeout){ // if was in target loger than timeout
           return true;
-        }
+        }*/
+        return true;
       } else {
         *timeInTarget = NOT_IN_TARGET;
       }

@@ -4,6 +4,7 @@ int Lift::holdPower = Lift::INTAKE_HOLD_POWER;
 
 double Lift::Machine::stateToPos(State state){
   switch(state){
+    case DEPLOY: return DEPLOY_POS;
     case PRE_TWO_GRAB: return PRE_TWO_GRAB_POS;
     case LOW_TOWER: return LOW_TOWER_POS;
     case MID_TOWER: return MID_TOWER_POS;
@@ -19,13 +20,14 @@ Lift::Machine::Machine(MotorGroup* liftMotors){
 void Lift::Machine::setState(State state){
   this->state = state;
   switch(state){
-    case CALIBRATE: calibrate(); break;
-    case STOP: poller = liftMotors->move(0); break;
-    case GRAB_STACK: grabStack(); break;
-    case LIFT_POWER: movePower(Input::getLiftPower()); break;
+    case CALIBRATE: calibrate(); return;
+    case STOP: poller = liftMotors->move(0); return;
+    case GRAB_STACK: grabStack(); return;
+    case LIFT_POWER: movePower(Input::getLiftPower()); return;
     case INTAKE: holdPower = INTAKE_HOLD_POWER; break;
-    case TILT_POWER: poller = Poller(); break;
-    case DROP_STACK: holdPower = DROP_STACK_HOLD_POWER; break;
+    case TILT_POWER: poller = Poller(); return;
+    case DROP_STACK: poller = liftMotors->move(0); return;
+    default: break;
   }
   double pos = stateToPos(state);
   this->currentState = [this, pos](void){

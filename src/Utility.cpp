@@ -14,7 +14,7 @@ int sign(double x){
 };
 
 double clipAngle(double a){
-  while(a > M_PI + 0.02 || a < -M_PI - 0.02){
+  while(a > M_PI + 0.02 || a < -1 * (M_PI + 0.02)){
     a -= M_PI * sign(a);
   }
   return a;

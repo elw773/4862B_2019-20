@@ -17,11 +17,11 @@ Poller MotorGroup::move(int power){
   return Poller();
 };
 
-Poller MotorGroup::movePosition(double position, int velocity, double range, int timeout){
+Poller MotorGroup::movePosition(double position, int velocity, double range){
   for(pros::Motor* motor:this->motors){
     motor->move_absolute(position, velocity);
   }
-  return Poller(std::bind(&MotorGroup::getPosition, this), position, range, timeout);
+  return Poller(std::bind(&MotorGroup::getPosition, this), position, range);
 };
 
 Poller MotorGroup::moveVelocity(int velocity, int range){

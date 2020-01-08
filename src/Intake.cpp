@@ -5,13 +5,24 @@ Intake::Machine::Machine(MotorGroup* intakeMotors){
 };
 
 void Intake::Machine::setState(State state){
-  int power = stateToPower(state);
-  this->state = state;
+  if(state == State::PREP_CUBE || state == State::OUTTAKE_CUBE){
+    int goal = intakeMotors->getPosition() - (state==State::PREP_CUBE?500:2000);
+    poller = Poller(false);
+    this->currentState = [goal, this](void){
+      intakeMotors->movePosition(goal);
+      if(abs(goal - intakeMotors->getPosition()) < 100){
+        poller.setPoller(true);
+      }
+    };
+  } else {
+    int power = stateToPower(state);
+    this->state = state;
 
-  this->currentState = [power, this](void){
-    intakeMotors->move(power);
-  };
-  poller = Poller();
+    this->currentState = [power, this](void){
+      intakeMotors->move(power);
+    };
+    poller = Poller();
+  }
 }
 
 
@@ -28,5 +39,6 @@ int Intake::Machine::stateToPower(State state){
     case HOLD: return HOLD_POWER;
     case GRAB_STACK: return GRAB_STACK_POWER;
     case INTAKE: return INTAKE_POWER;
+    default: return 0;
   }
 }

@@ -14,6 +14,9 @@
 #include "LiftTilt.hpp"
 
 namespace Robot {
+  extern long lastHandleTime;
+  extern long handleLoopTime;
+
   extern const int numMotors;
 
   extern std::vector<pros::Motor*> motors;
