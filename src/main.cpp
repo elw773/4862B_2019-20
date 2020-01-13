@@ -13,7 +13,7 @@ int LIFT_DOWN = 100;
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	pros::lcd::initialize();
+	Display::init();
 }
 
 /**
@@ -21,7 +21,13 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+	while(pros::competition::is_disabled ( )){
+		Display::update();
+
+		pros::delay(10);
+	}
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -32,7 +38,13 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	while(true){
+		Display::update();
+
+		pros::delay(10);
+	}
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -45,7 +57,9 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	Atn::runAuton();
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -157,18 +171,106 @@ void autonomous() {}
 
 	//Poller calibrate = Robot::liftTilt.setState(LiftTilt::CALIBRATE);
 	//Robot::wait(&calibrate);
-	Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
 
+/*
+	Poller drivePoller = Robot::drive.moveDistance(33,90);
+	Robot::intake.setState(Intake::INTAKE);
+	Robot::wait(&drivePoller);
+	drivePoller = Robot::drive.moveAngle(-20,100);
+	Robot::wait(&drivePoller);
+	drivePoller = Robot::drive.moveDistance(17,150);
+	Robot::wait(&drivePoller);
+	drivePoller = Robot::drive.moveDistance(-32,250);
+	Robot::wait(&drivePoller);
+	drivePoller = Robot::drive.moveAngle(165,100);
+	Robot::wait(&drivePoller);
+	drivePoller = Robot::drive.moveDistance(3.3,100,1,0);
+	Robot::wait(&drivePoller);
+	Robot::intake.setState(Intake::STOP);
+	Robot::drive.move(0,0);
+	Poller liftTiltPoller = Robot::liftTilt.setState(LiftTilt::DROP_STACK);
+	Robot::wait(&liftTiltPoller);
+	Robot::intake.setState(Intake::STACK_OUTTAKE);
+	drivePoller = Robot::drive.moveDistance(-10,80);
+	Robot::wait(&drivePoller);
+*/
+/*
+	Poller drivePoller = Robot::drive.moveDistance(16,200);
+	Robot::intake.setState(Intake::INTAKE);
+	Robot::wait(&drivePoller);
+
+	Poller liftTiltPoller = Robot::liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
+	drivePoller = Robot::drive.moveDistance(16,200);
+	Robot::wait(&drivePoller);
+
+	liftTiltPoller = Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
+
+	drivePoller = Robot::drive.moveDistance(24,150);
+	Robot::wait(&drivePoller);
+
+	drivePoller = Robot::drive.moveDistance(-12,200);
+	Robot::wait(&drivePoller);
+
+	drivePoller = Robot::drive.moveAngle(-30,100);
+	Robot::wait(&drivePoller);
+
+	drivePoller = Robot::drive.moveDistance(10,200);
+	Robot::wait(&drivePoller);
+
+	drivePoller = Robot::drive.moveAngle(-125,100);
+	Robot::wait(&drivePoller);
+
+	drivePoller = Robot::drive.moveDistance(40.5,300);
+	Robot::wait(&drivePoller);
+
+	Robot::intake.setState(Intake::STOP);
+	Robot::drive.move(0,0);
+	liftTiltPoller = Robot::liftTilt.setState(LiftTilt::DROP_STACK);
+	Robot::wait(&liftTiltPoller);
+	Robot::intake.setState(Intake::STACK_OUTTAKE);
+	drivePoller = Robot::drive.moveDistance(-10,80);
+	Robot::wait(&drivePoller);*/
+
+
+
+
+
+	//Robot::liftTilt.setState(LiftTilt::BOT_INTAKE);
+	//Robot::drive.move(0,0);
+	//Poller poller = Robot::liftTilt.setState(LiftTilt::CALIBRATE);
+	//Robot::wait(&poller);
 	while(true){
-		pros::lcd::print(0, "Lift: %d", Robot::liftMotorGroup.getPosition());
-		pros::lcd::print(1, "Tilt: %d", Robot::tiltMotorGroup.getPosition());
+		/*
+		Vector robot;
+		robot.a = 0;
+		robot.y = 0;
+		robot.x = 40;
+		Vector a;
+		a.x = 40;
+		a.y = 0;
+		Vector b;
+		b.x = 40;
+		b.y = 40;
+		Line line;
+		line.a = a;
+		line.b = b;
+		*/
+
+		if(Input::controller.get_digital(DIGITAL_X) && Input::controller.get_digital(DIGITAL_B)){
+				Atn::runAuton();
+		}
+
+		if(Input::controller.get_digital(DIGITAL_B)){
+			Atn::dropStack();
+		}
+		Robot::intake.setState(Input::getIntakeState());
 
 		Robot::liftTilt.setState(Input::getLiftTiltState());
 
-		Robot::intake.setState(Input::getIntakeState());
+
 
 		Robot::drive.move(Input::getleftDrive(), Input::getRightDrive());
 		Robot::handle();
-		pros::delay(20);
+
 	}
  }

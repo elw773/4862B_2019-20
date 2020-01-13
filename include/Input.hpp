@@ -7,12 +7,15 @@
 
 namespace Input{
   extern bool shldrBtn;
+  extern bool dPadBtn;
 
   extern pros::Controller controller;
 
   LiftTilt::State getLiftTiltState(void);
 
   Intake::State getIntakeState(void);
+
+  int getLiftPower(void);
 
   int getRightDrive(void);
 

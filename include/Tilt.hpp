@@ -7,39 +7,49 @@
 #include "Handleable.hpp"
 
 namespace Tilt{
-  const int DEADBAND = 20;
-  const int DEF_VELOCITY = 60;
-  const int SLOW_VELOCITY = 17;
+  const int CALIBRATE_OFFSET = 60;
+  const int DEADBAND = 60;
+  const int SLOW_VELOCITY = 90;
+  const int DEF_VELOCITY = 100;
 
-  const int SLOW_POS = 1500;
-  const int BOT_HOLD_POWER = -4;
+  const double SLOW_POS = 1500;
+  const int BOT_HOLD_POWER = 0;
 
-  const int TOWER_POS = 550;
-  const int BOT_INTAKE_POS = 0;
-  const int MID_INTAKE_POS = 675;
-  const int HIGH_INTAKE_POS = 1500;
-  const int DROP_STACK_POS = 4300;
+  const double TOWER_POS = 1500;
+  const double BOT_INTAKE_POS = 0;
+  const double MID_INTAKE_POS = 2000;
+  const double HIGH_INTAKE_POS = 4400;
+  const double DROP_STACK_POS = 9000;
+  const double ALMOST_STACK_POS = 8000;
 
   enum State {
+    ALMOST_STACK = 6,
     TOWER = 5,
     DROP_STACK = 4,
     HIGH_INTAKE = 3,
     MID_INTAKE = 2,
     BOT_INTAKE = 1,
     STOP = 0,
-    CALIBRATE = -1
+    CALIBRATE = -1,
+    LIFT_POWER = -2,
+    TILT_POWER = -3
   };
 
-  int stateToPos(State state);
 
   class Machine : public Handleable{
     MotorGroup* tiltMotors;
+    Poller poller;
   public:
+    Poller* getPoller(void);
+    double stateToPos(State state);
+
     Machine(MotorGroup* tiltMotors);
 
-    Poller setState(State state);
+    void movePower(int power);
+    void setState(State state);
 
-    Poller calibrate(void);
+    void calibrate(void);
+    void dropStack(void);
 
     void handle(void);
   };

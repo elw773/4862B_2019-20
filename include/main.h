@@ -41,13 +41,16 @@
 #include "MotorGroup.hpp"
 #include "Input.hpp"
 #include "Auton.hpp"
+#include "Display.hpp"
 
+#include "PosTrack.hpp"
 #include "Drive.hpp"
 #include "Lift.hpp"
 #include "Tilt.hpp"
 #include "Intake.hpp"
 #include "LiftTilt.hpp"
 #include "Robot.hpp"
+#include "Utility.hpp"
 
 
 /**

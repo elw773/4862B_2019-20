@@ -7,39 +7,57 @@
 #include "Handleable.hpp"
 
 namespace Lift {
-  const int DEADBAND = 20;
+  const int CALIBRATE_OFFSET = 30;
+  const int DEADBAND = 60;
   const int DEF_VELOCITY = 90;
 
-  const int DROP_STACK_HOLD_POWER = -15;
-  const int INTAKE_HOLD_POWER = -4;
 
-  const int LOW_TOWER_POS = 1900;
-  const int MID_TOWER_POS = 2450;
-  const int INTAKE_POS = 0;
+  const int DROP_STACK_HOLD_POWER = -5;
+  const int INTAKE_HOLD_POWER = 0;
+
+  const double PRE_TWO_GRAB_POS = 300;
+  const double LOW_TOWER_POS = 1700;
+  const double MID_TOWER_POS = 2300;
+  const double INTAKE_POS = 0;
+  const double DEPLOY_POS = 500;
 
   extern int holdPower;
 
   enum State{
+    DEPLOY = 7,
+    PRE_TWO_GRAB = 6,
+    GRAB_STACK = 5,
     LOW_TOWER = 4,
     MID_TOWER = 3,
     INTAKE = 2,
     DROP_STACK = 1,
     STOP = 0,
-    CALIBRATE = -1
+    CALIBRATE = -1,
+    POWER = -2,
+    LIFT_POWER = -2,
+    TILT_POWER = -3
   };
 
 
 
-  int stateToPos(State state);
+
 
   class Machine : public Handleable{
     MotorGroup* liftMotors;
+    Poller poller;
   public:
+    Poller* getPoller(void);
+    double stateToPos(State state);
     Machine(MotorGroup* liftMotors);
 
-    Poller setState(State state);
+    void setState(State state);
 
-    Poller calibrate(void);
+
+    void movePower(int power);
+
+    void calibrate(void);
+
+    void grabStack(void);
 
     void handle(void);
   };

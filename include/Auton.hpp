@@ -7,15 +7,26 @@ namespace Atn {
   const bool RED = true;
   const bool BLUE = false;
 
+  extern int selectedAuton;
+
+  void nextAuton(void);
+  void prevAuton(void);
+  std::string getSelectedAutonName(void);
+
+  void runAuton(void);
+
   class Auton{
     std::function<void(bool)> func;
     std::string name;
   public:
+    std::string getName(void);
     Auton(std::function<void(bool)> func, std::string name);
     void run(bool side);
   };
 
-  extern std::vector<Auton> autons;
+  void dropStack(void);
+
+  extern std::vector<Auton*> autons;
 };
 
 #endif //_AUTON_HPP_

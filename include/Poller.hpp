@@ -10,6 +10,8 @@ class Poller{
   std::function<bool(int*)> isDone;
 
 public:
+  std::function<bool(int*)> getIsDone(void);
+
   Poller(void); // poller that is always true
 
   Poller(bool b);
@@ -22,11 +24,15 @@ public:
 
   Poller(std::function<bool(void)> isDone);
 
-  Poller(std::function<int(void)> value, int target, int range, int timeout = 0);
+  Poller(std::function<int(void)> value, int target, int range);
+
+  Poller(std::function<double(void)> value, double target, double range);
 
   Poller(std::function<int(void)> value, int target);
 
   Poller(Poller* a, Poller* b);
+
+  Poller(std::function<bool(int*)> a, std::function<bool(int*)> b);
 
   bool finished(void);
 };

@@ -2,8 +2,9 @@
 
 typedef int (MotorGroup::*ValueFn)(void);
 
-MotorGroup::MotorGroup(std::vector<pros::Motor*> motors, int slew){
+MotorGroup::MotorGroup(std::vector<pros::Motor*> motors, pros::motor_brake_mode_e brakeMode, int slew){
   for(pros::Motor* motor:motors){
+    motor->set_brake_mode(brakeMode);
     this->motors.push_back(motor);
   }
   this->slew = slew;
@@ -16,12 +17,16 @@ Poller MotorGroup::move(int power){
   return Poller();
 };
 
-Poller MotorGroup::movePosition(int position, int velocity, int range, int timeout){
+Poller MotorGroup::movePosition(double position, int velocity, double range){
   for(pros::Motor* motor:this->motors){
     motor->move_absolute(position, velocity);
   }
-  return Poller(std::bind(&MotorGroup::getPosition, this), position, range, timeout);
+  return Poller(std::bind(&MotorGroup::getPosition, this), position, range);
 };
+
+double MotorGroup::getVoltage(void){
+  return (this->motors.at(0)->get_voltage() / 12000) * 127;
+}
 
 Poller MotorGroup::moveVelocity(int velocity, int range){
   for(pros::Motor* motor:this->motors){
@@ -37,11 +42,11 @@ void MotorGroup::setZeroPosition(void){
   }
 };
 
-int MotorGroup::getTargetPosition(void){
+double MotorGroup::getTargetPosition(void){
   return this->motors.at(0)->get_target_position();
 };
 
-int MotorGroup::getPosition(void){
+double MotorGroup::getPosition(void){
   return this->motors.at(0)->get_position();
 };
 

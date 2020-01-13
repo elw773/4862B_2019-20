@@ -10,6 +10,10 @@
 
 namespace LiftTilt {
   enum State{
+    ALMOST_STACK = 10,
+    DEPLOY = 9,
+    PRE_TWO_GRAB = 8,
+    GRAB_STACK = 7,
     LOW_TOWER = 6,
     MID_TOWER = 5,
     DROP_STACK = 4,
@@ -17,16 +21,20 @@ namespace LiftTilt {
     MID_INTAKE = 2,
     BOT_INTAKE = 1,
     STOP = 0,
-    CALIBRATE = -1
+    CALIBRATE = -1,
+    LIFT_POWER = -2,
+    TILT_POWER = -3
   };
 
   class Machine : public Handleable{
     Tilt::Machine* tilt;
     Lift::Machine* lift;
+    Poller poller;
   public:
+    Poller* getPoller(void);
     Machine(Tilt::Machine* tilt, Lift::Machine* lift);
 
-    Poller setState(State state);
+    void setState(State state);
 
     void handle(void);
   };

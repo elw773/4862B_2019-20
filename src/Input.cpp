@@ -3,8 +3,11 @@
 pros::Controller Input::controller(pros::E_CONTROLLER_MASTER);
 
 bool Input::shldrBtn = false;
+bool Input::dPadBtn = false;
 
 LiftTilt::State Input::getLiftTiltState(void){
+
+
   bool topShldr = controller.get_digital(DIGITAL_L1);
   bool botShldr = controller.get_digital(DIGITAL_L2);
   bool topDpad = controller.get_digital(DIGITAL_UP);
@@ -16,26 +19,45 @@ LiftTilt::State Input::getLiftTiltState(void){
   int tiltState = Robot::tilt.getState();
   int liftTiltState = Robot::liftTilt.getState();
 
+  if(abs(controller.get_analog(ANALOG_LEFT_Y))>5){
+    if(liftTiltState == LiftTilt::DROP_STACK ||liftTiltState == LiftTilt::TILT_POWER ){
+      return LiftTilt::TILT_POWER;
+    } else {
+      return LiftTilt::LIFT_POWER;
 
-  if(topDpad){
-    return LiftTilt::HIGH_INTAKE;
+    }
   }
 
-  if(botDpad){
-    return LiftTilt::BOT_INTAKE;
+  if(controller.get_digital(DIGITAL_Y)){
+    return LiftTilt::CALIBRATE;
   }
 
-  if(leftDpad){
-    return LiftTilt::MID_TOWER;
-  }
+  //if(!dPadBtn){
+    if(topDpad){
+      return LiftTilt::HIGH_INTAKE;
+    }
 
-  if(rightDpad){
-    return LiftTilt::DROP_STACK;
-  }
+    if(botDpad){
+      return LiftTilt::BOT_INTAKE;
+    }
+
+    if(leftDpad){
+      return LiftTilt::MID_INTAKE;
+    }
+
+    if(rightDpad){
+      switch(liftTiltState){
+        //case LiftTilt::DROP_STACK: return LiftTilt::ALMOST_STACK;
+        default: return LiftTilt::DROP_STACK;
+      }
+    }
+  //}
+  dPadBtn = rightDpad || leftDpad || topDpad || botDpad;
 
 
 
   if(!shldrBtn){
+    shldrBtn = topShldr || botShldr;
     if(topShldr){
       switch(liftTiltState){
         case LiftTilt::MID_TOWER: return LiftTilt::MID_TOWER;
@@ -49,8 +71,9 @@ LiftTilt::State Input::getLiftTiltState(void){
       }
     }
   }
-
   shldrBtn = topShldr || botShldr;
+
+
 
  // if no new state, use previous state
 
@@ -75,7 +98,7 @@ Intake::State Input::getIntakeState(void){
     return Intake::INTAKE;
   }
   if(botShldr){
-    if(Robot::tilt.getState() == Tilt::DROP_STACK){
+    if(Robot::tilt.getState() == Tilt::DROP_STACK || Robot::tilt.getState() == Tilt::TILT_POWER ){
       return Intake::STACK_OUTTAKE;
     } else {
       return Intake::OUTTAKE;
@@ -84,6 +107,13 @@ Intake::State Input::getIntakeState(void){
 
   return Intake::STOP;
 };
+
+int Input::getLiftPower(void){
+  if(abs(controller.get_analog(ANALOG_LEFT_Y))<5){
+    return 0;
+  }
+  return controller.get_analog(ANALOG_LEFT_Y);
+}
 
 int Input::getRightDrive(void){
   return controller.get_analog(ANALOG_RIGHT_Y) - controller.get_analog(ANALOG_RIGHT_X);

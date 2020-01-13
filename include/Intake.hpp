@@ -10,26 +10,34 @@ namespace Intake {
 
   const int STOP_POWER = 0;
   const int INTAKE_POWER = 110;
-  const int HOLD_POWER = 40;
+  const int GRAB_STACK_POWER = 70;
+  const int HOLD_POWER = 30;
   const int OUTTAKE_POWER = -70;
   const int STACK_OUTTAKE_POWER = -100;
 
   enum State {
+    OUTTAKE_CUBE = -4,
+    PREP_CUBE = -3,
     STACK_OUTTAKE = -2,
     OUTTAKE = -1,
     STOP = 0,
     HOLD = 1,
-    INTAKE = 2
+    GRAB_STACK = 2,
+    INTAKE = 3
   };
 
-  int stateToPower(State state);
+
 
   class Machine : public Handleable{
     MotorGroup* intakeMotors;
+    Poller poller;
   public:
+    Poller* getPoller(void);
+
+    int stateToPower(State state);
     Machine(MotorGroup* intakeMotors);
 
-    Poller setState(State state);
+    void setState(State state);
   };
 };
 

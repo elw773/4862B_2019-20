@@ -13,15 +13,16 @@ Poller::Poller(bool b){
 };
 
 void Poller::setPoller(bool b){
+
   this->isDone = [b](int* timeInTarget){
     return b;
   };
 };
 
 Poller::Poller(int time){
-  this->timeInTarget = pros::millis();
-  this->isDone = [time](int* timeInTarget){
-    return (pros::millis() - *timeInTarget) > time; // return true if elapsed time is greater than desired time
+  int startTime = pros::millis();
+  this->isDone = [time, startTime](int* timeInTarget){
+    return (pros::millis() - startTime) > time; // return true if elapsed time is greater than desired time
   };
 };
 
@@ -35,16 +36,37 @@ Poller::Poller(std::function<bool(void)> isDone){
   };
 };
 
-Poller::Poller(std::function<int(void)> value, int target, int range, int timeout){
-  this->isDone = [value, target, range, timeout](int* timeInTarget){
+Poller::Poller(std::function<int(void)> value, int target, int range){
+  this->isDone = [value, target, range](int* timeInTarget){
       if(abs(target-value()) < range){
+        /*
         if(*timeInTarget == NOT_IN_TARGET){ // if was not in target
           *timeInTarget = pros::millis();
         }
 
         if((pros::millis() - *timeInTarget) > timeout){ // if was in target loger than timeout
           return true;
+        }*/
+        return true;
+      } else {
+        *timeInTarget = NOT_IN_TARGET;
+      }
+      return false;
+  };
+};
+
+Poller::Poller(std::function<double(void)> value, double target, double range){
+  this->isDone = [value, target, range](int* timeInTarget){
+      if(fabs(target-value()) < range){
+        /*
+        if(*timeInTarget == NOT_IN_TARGET){ // if was not in target
+          *timeInTarget = pros::millis();
         }
+
+        if((pros::millis() - *timeInTarget) > timeout){ // if was in target loger than timeout
+          return true;
+        }*/
+        return true;
       } else {
         *timeInTarget = NOT_IN_TARGET;
       }
@@ -69,11 +91,23 @@ Poller::Poller(std::function<int(void)> value, int target){
 };
 
 Poller::Poller(Poller* a, Poller* b){
+  std::function<bool(int*)> aFunc = a->getIsDone();
+  std::function<bool(int*)> bRunc = b->getIsDone();
   this->isDone = [a, b](int* timeInTarget){
     return a->finished() && b->finished();
   };
-}
+};
+
+Poller::Poller(std::function<bool(int*)> a, std::function<bool(int*)> b){
+  this->isDone = [a, b](int* timeInTarget){
+    return (a(timeInTarget)) && (b(timeInTarget));
+  };
+};
 
 bool Poller::finished(void){
   return isDone(&timeInTarget);
+};
+
+std::function<bool(int*)> Poller::getIsDone(void){
+  return isDone;
 };
