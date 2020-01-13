@@ -34,6 +34,7 @@ std::string Atn::getSelectedAutonName(void){
 };
 
 void Atn::runAuton(void){
+  Robot::drive.reset();
   autons.at(selectedAuton)->run(true);
 };
 
@@ -42,150 +43,193 @@ void Atn::dropStack(void){
   Poller* liftTiltPoller = liftTilt.getPoller();
   Poller timer;
 
-  intake.setState(Intake::STOP);
+
   drive.move(0,0);
+
   liftTilt.setState(LiftTilt::DROP_STACK);
-  wait(liftTiltPoller);
-  timer = Poller(700);
-  intake.setState(Intake::STACK_OUTTAKE);
+  timer = Poller(500);
   wait(&timer);
-  drive.moveDistance(-7,90);
+  intake.setState(Intake::STOP);
+
+  timer = Poller(4600);
+  wait(&timer);
+  intake.setState(Intake::STACK_OUTTAKE);
+  drive.moveDistance(-7,80);
   wait(drivePoller);
 };
 
-Atn::Auton redSmallZn(
+Atn::Auton redSmall5(
   [](bool side){
     Poller* drivePoller = drive.getPoller();
     Poller* liftTiltPoller = liftTilt.getPoller();
-    Poller timer;
 
     intake.setState(Intake::INTAKE);
-    drive.driveToPoint(40, 0, 170, Drive::StopType::SOFT_STOP, false);
-    wait(drivePoller);
-    drive.turnToPoint(63, -10, 200, Drive::StopType::SOFT_STOP);
-    wait(drivePoller);
+    liftTilt.setState(LiftTilt::DEPLOY);
+    wait(liftTiltPoller);
+    liftTilt.setState(LiftTilt::BOT_INTAKE);
 
-    drive.moveDistance(7, 200);
-    wait(drivePoller);
+    drive.moveDistance(32, 170,Drive::DEF_RANGE,0);
 
-    liftTilt.setState(LiftTilt::HIGH_INTAKE);
-
-    drive.driveToPoint(20, 0, 220, Drive::StopType::SOFT_STOP, true);
     wait(drivePoller);
 
-    drive.turnToAngle(degreeToRad(130)	, 200, Drive::StopType::SOFT_STOP);
+    drive.moveDistance(10,150);
     wait(drivePoller);
 
-    drive.moveDistance(10, 150);
+    drive.moveAngleDeg(30,100); //ANGLE
     wait(drivePoller);
 
-    intake.setState(Intake::STOP);
+    drive.moveDistance(9,120);
+    wait(drivePoller);
+
+    liftTilt.setState(LiftTilt::MID_INTAKE);
+
+    drive.moveDistance(-20,300);
+    wait(drivePoller);
+
+    drive.moveAngleDeg(-192,100);//ANGLE
+    wait(drivePoller);
+
+    drive.moveDistance(17,300,1,0);
+    wait(drivePoller);
 
     Atn::dropStack();
+    Robot::stop();
 
   },
-  "redSmallZn"
+  "redSmall5"
 );
 
 
-Atn::Auton blueSmallZn(
+Atn::Auton blueSmall5(
   [](bool side){
     Poller* drivePoller = drive.getPoller();
     Poller* liftTiltPoller = liftTilt.getPoller();
-    Poller timer;
 
     intake.setState(Intake::INTAKE);
-    drive.driveToPoint(40, 0, 170, Drive::StopType::SOFT_STOP, false);
-    wait(drivePoller);
-    drive.turnToPoint(63, 10, 200, Drive::StopType::SOFT_STOP);
-    wait(drivePoller);
+    liftTilt.setState(LiftTilt::DEPLOY);
+    wait(liftTiltPoller);
+    liftTilt.setState(LiftTilt::BOT_INTAKE);
 
-    drive.moveDistance(7, 200);
-    wait(drivePoller);
+    drive.moveDistance(32, 170,Drive::DEF_RANGE,0);
 
-    liftTilt.setState(LiftTilt::HIGH_INTAKE);
-
-    drive.driveToPoint(20, 0, 220, Drive::StopType::SOFT_STOP, true);
     wait(drivePoller);
 
-    drive.turnToAngle(degreeToRad(-130)	, 200, Drive::StopType::SOFT_STOP);
+    drive.moveDistance(10,150);
     wait(drivePoller);
 
-    drive.moveDistance(10, 150);
+    drive.moveAngleDeg(-30,100); //ANGLE
     wait(drivePoller);
 
-    intake.setState(Intake::STOP);
+    drive.moveDistance(9,120);
+    wait(drivePoller);
+
+    liftTilt.setState(LiftTilt::MID_INTAKE);
+
+    drive.moveDistance(-20,300);
+    wait(drivePoller);
+
+    drive.moveAngleDeg(192,100);//ANGLE
+    wait(drivePoller);
+
+    drive.moveDistance(17,300,1,0);
+    wait(drivePoller);
 
     Atn::dropStack();
+    Robot::stop();
   },
-  "blueSmallZn"
+  "blueSmall5"
 );
-/*
+
 
 Atn::Auton redLargeZn(
   [](bool side){
-    Poller drivePoller = drive.moveDistance(16,170,Drive::DEF_RANGE,0);
-    intake.setState(Intake::INTAKE);
-    wait(&drivePoller);
+    Poller* drivePoller = drive.getPoller();
+    Poller* liftTiltPoller = liftTilt.getPoller();
 
-    Poller liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
-    drivePoller = drive.moveDistance(16,120);
-    wait(&drivePoller);
+    intake.setState(Intake::INTAKE);
+    liftTilt.setState(LiftTilt::DEPLOY);
+    wait(liftTiltPoller);
+    liftTilt.setState(LiftTilt::BOT_INTAKE);
+
+    drive.moveDistance(21,170,Drive::DEF_RANGE,0);
+    intake.setState(Intake::INTAKE);
+    wait(drivePoller);
+
+    liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
+    drive.moveDistance(11,120);
+    wait(drivePoller);
 
     liftTilt.setState(LiftTilt::BOT_INTAKE);
 
-    drivePoller = drive.moveDistance(12,150);
-    wait(&drivePoller);
+    drive.moveDistance(10,150);
+    wait(drivePoller);
 
-    drivePoller = drive.moveAngle(30,100); //ANGLE
-    wait(&drivePoller);
+    drive.moveAngleDeg(132,100);//ANGLE
+    wait(drivePoller);
 
-    drivePoller = drive.moveDistance(10,120);
-    wait(&drivePoller);
-
-    drivePoller = drive.moveAngle(130,100);//ANGLE
-    wait(&drivePoller);
-
-    drivePoller = drive.moveDistance(40,300,1,0);
-    wait(&drivePoller);
+    drive.moveDistance(35,300,1,0);
+    wait(drivePoller);
 
     Atn::dropStack();
+    Robot::stop();
   },
   "redLargeZn"
 );
 
 Atn::Auton blueLargeZn(
   [](bool side){
-    Poller drivePoller = drive.moveDistance(16,120,Drive::DEF_RANGE,0);
-    intake.setState(Intake::INTAKE);
-    wait(&drivePoller);
+    Poller* drivePoller = drive.getPoller();
+    Poller* liftTiltPoller = liftTilt.getPoller();
 
-    Poller liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
-    drivePoller = drive.moveDistance(16,120);
-    wait(&drivePoller);
+    intake.setState(Intake::INTAKE);
+    liftTilt.setState(LiftTilt::DEPLOY);
+    wait(liftTiltPoller);
+    liftTilt.setState(LiftTilt::BOT_INTAKE);
+
+    drive.moveDistance(21,170,Drive::DEF_RANGE,0);
+    intake.setState(Intake::INTAKE);
+    wait(drivePoller);
+
+    liftTilt.setState(LiftTilt::PRE_TWO_GRAB);
+    drive.moveDistance(11,120);
+    wait(drivePoller);
 
     liftTilt.setState(LiftTilt::BOT_INTAKE);
 
-    drivePoller = drive.moveDistance(12,150);
-    wait(&drivePoller);
+    drive.moveDistance(10,150);
+    wait(drivePoller);
 
-    drivePoller = drive.moveAngle(-30,100); //ANGLE
-    wait(&drivePoller);
+    drive.moveAngleDeg(-132,100);//ANGLE
+    wait(drivePoller);
 
-    drivePoller = drive.moveDistance(10,120);
-    wait(&drivePoller);
-
-    drivePoller = drive.moveAngle(-130,100);//ANGLE
-    wait(&drivePoller);
-
-    drivePoller = drive.moveDistance(40,300,1,0);
-    wait(&drivePoller);
-
+    drive.moveDistance(345,300,1,0);
+    wait(drivePoller);
 
     Atn::dropStack();
+    Robot::stop();
   },
   "blueLargeZn"
 );
+
+Atn::Auton noDrop(
+  [](bool side){
+    Poller* drivePoller = drive.getPoller();
+    Poller* liftTiltPoller = liftTilt.getPoller();
+
+    intake.setState(Intake::INTAKE);
+    liftTilt.setState(LiftTilt::DEPLOY);
+    wait(liftTiltPoller);
+    liftTilt.setState(LiftTilt::BOT_INTAKE);
+
+    drive.moveDistance(30,170,Drive::DEF_RANGE,0);
+
+    wait(drivePoller);
+
+    Robot::stop();
+  },
+  "smallNoDrop"
+);
+/*
 
 
 Atn::Auton redLargeNoDrop(
@@ -205,7 +249,7 @@ Atn::Auton redLargeNoDrop(
     	wait(&drivePoller);
 
 
-  	drivePoller = drive.moveAngle(137,100);//ANGLE
+  	drivePoller = drive.moveAngleDeg(137,100);//ANGLE
   	wait(&drivePoller);
 
   	drivePoller = drive.moveDistance(34.5,300, 1.5,0);
@@ -233,7 +277,7 @@ Atn::Auton blueLargeNoDrop(
     	wait(&drivePoller);
 
 
-  	drivePoller = drive.moveAngle(-137,100);//ANGLE
+  	drivePoller = drive.moveAngleDeg(-137,100);//ANGLE
   	wait(&drivePoller);
 
     drivePoller = drive.moveDistance(34.5,300, 1.5,0);
@@ -245,4 +289,4 @@ Atn::Auton blueLargeNoDrop(
   "blueLarge5"
 );
 */
-std::vector<Atn::Auton*> Atn::autons = {&redSmallZn};
+std::vector<Atn::Auton*> Atn::autons = {&redSmall5, &blueSmall5, &redLargeZn, &blueLargeZn, &noDrop};

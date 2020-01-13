@@ -10,6 +10,12 @@ const double noTurnDist = 7;
 const double decelK = 2;
 const double decelKa = degreeToRad(10);
 
+void Drive::Machine::reset(void){
+  leftMotors->setZeroPosition();
+  rightMotors->setZeroPosition();
+  posTracker->reset();
+}
+
 Drive::Machine::Machine(MotorGroup* leftMotors, MotorGroup* rightMotors, PosTrack::PosTracker* posTracker){
   this->leftMotors = leftMotors;
   this->rightMotors = rightMotors;
@@ -33,11 +39,14 @@ void Drive::Machine::moveDistance(double distance, int velocity, double range, i
   poller = Poller(false);
 
   this->currentState = [leftGoal, rightGoal, velocity, range, this](void){
+    /*
     slewVelocity(
       limit(kPsl * (leftGoal - leftMotors->getPosition()) * ticksToDistance, velocity),
       limit(kPsl * (rightGoal - rightMotors->getPosition()) * ticksToDistance, velocity)
-    );
-    if(abs(leftGoal - leftMotors->getPosition()) < range){
+    );*/
+    leftMotors->movePosition(leftGoal, velocity);
+    rightMotors->movePosition(rightGoal, velocity);
+    if(fabs(leftGoal - leftMotors->getPosition()) < range * distanceToTicks){
       poller.setPoller(true);
       slewVelocity(0,0);
     }
@@ -45,7 +54,7 @@ void Drive::Machine::moveDistance(double distance, int velocity, double range, i
 
 };
 
-void Drive::Machine::moveAngle(double angle, int velocity, double range, int timeout){
+void Drive::Machine::moveAngleDeg(double angle, int velocity, double range, int timeout){
   this->state = ANGLE;
   double tickGoal = angle*angleToTicks;
   int leftGoal = (tickGoal * -0.5) + leftMotors->getPosition();
@@ -53,9 +62,9 @@ void Drive::Machine::moveAngle(double angle, int velocity, double range, int tim
   poller = Poller(false);
 
   this->currentState = [leftGoal, rightGoal, velocity, range, this](void){
-    rightMotors->movePosition(leftGoal, velocity);
-    leftMotors->movePosition(rightGoal, velocity);
-    if(abs(leftGoal - leftMotors->getPosition()) < range){
+    leftMotors->movePosition(leftGoal, velocity);
+    rightMotors->movePosition(rightGoal, velocity);
+    if(fabs(leftGoal - leftMotors->getPosition()) < range * distanceToTicks){
       poller.setPoller(true);
     }
   };
@@ -159,7 +168,6 @@ void Drive::Machine::driveToPointLine(double xStart, double yStart, double xGoal
     if(reverse){
       dirrection = -1;
     }
-    pros::lcd::print(7, "l: %5f, %5d", fabs(limit(straightDistToGoal * kPsl, velocity)), leftVel);
 
     if(fabs(distErrorToGoal) > noTurnDist && (fabs(straightDistToGoal) > noTurnDist || fabs(sidewaysDistToGoal) > noTurnDist)){
       aIntegral = limit(aIntegral, aIntegralLimit);
@@ -191,6 +199,8 @@ void Drive::Machine::driveToPointLine(double xStart, double yStart, double xGoal
 
     slewVelocity(leftVel, rightVel);
 
+    pros::lcd::print(6, "Goal X: %3f Y: %3f", line.b.x, line.b.y);
+    pros::lcd::print(7, "StrE: %5f AbsE: %5f", straightDistToGoal, distErrorToGoal);
 
     if((fabs(straightDistToGoal) < range || fabs(aErrorToGoal) > (M_PI / 2)) && fabs(distErrorToGoal) < noTurnDist){ // if within 5 inch circle of point and cant get any much closer
       poller.setPoller(true);
@@ -246,7 +256,6 @@ void Drive::Machine::driveToPoint(double xGoal, double yGoal, int velocity, Stop
     if(reverse){
       dirrection = -1;
     }
-    pros::lcd::print(7, "l: %5f, %5d", fabs(limit(straightDistToGoal * kPsl, velocity)), leftVel);
 
     if(fabs(distErrorToGoal) > noTurnDist && (fabs(straightDistToGoal) > noTurnDist || fabs(sidewaysDistToGoal) > noTurnDist)){
       aIntegral = limit(aIntegral, aIntegralLimit);
@@ -270,7 +279,8 @@ void Drive::Machine::driveToPoint(double xGoal, double yGoal, int velocity, Stop
       aIntegral = 0;
     }
 
-
+    pros::lcd::print(6, "Goal X: %3f Y: %3f", goal.x, goal.y);
+    pros::lcd::print(7, "StrE: %5f AbsE: %5f", straightDistToGoal, distErrorToGoal);
 
 
     rightVel *= dirrection;
@@ -330,7 +340,8 @@ void Drive::Machine::turnToPoint(double xGoal, double yGoal, int velocity, StopT
         rightMotors->moveVelocity(0);
       }
     }
-    pros::lcd::print(7, "l: %5f, %5f", aError, clipAngle(calcAngle(robotVector, goalPos)));
+    pros::lcd::print(6, "Goal X:%3f Y:%3f A:%5f", goalPos.x, goalPos.y, calcAngle(robotVector, goalPos));
+    pros::lcd::print(7, "AErr: %5f", aError);
 
 
   };
@@ -362,7 +373,8 @@ void Drive::Machine::turnToAngle(double aGoal, int velocity, StopType stopType, 
     rightVel = 0.5 * pow;
 
     slewVelocity(leftVel, rightVel);
-    pros::lcd::print(7, "l: %5f, %5d", radToDegree(aError), pow);
+    pros::lcd::print(6, "Goal A: ", aGoal);
+    pros::lcd::print(7, "AErr: %5f", aError);
 
 
     if(fabs(aError) < range){

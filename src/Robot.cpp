@@ -12,7 +12,7 @@ pros::Motor rightMotor2(3, GEARSET_600_RPM, false);
 pros::Motor tiltMotor(9, GEARSET_100_RPM, false);
 pros::Motor liftMotor(8, GEARSET_100_RPM, false);
 pros::Motor intakeMotor1(13, GEARSET_200_RPM, false);
-pros::Motor intakeMotor2(15, GEARSET_200_RPM, true);
+pros::Motor intakeMotor2(17, GEARSET_200_RPM, true);
 
 std::vector<pros::Motor*> Robot::motors = {&leftMotor1, &leftMotor2, &rightMotor1, &rightMotor2, &tiltMotor, &liftMotor, &intakeMotor1, &intakeMotor2};
 std::vector<std::string> Robot::motorNames = {"left1", "left2", "right1", "right2", "tilt", "lift", "intake1", "intake2"};
@@ -65,13 +65,17 @@ void Robot::handle(void){
   handleLoopTime = pros::millis() - lastHandleTime;
   lastHandleTime = pros::millis();
 
+  Display::update(); // update display first so other things can rewrite
+
+
   drive.handle();
   liftTilt.handle();
   intake.handle();
   posTracker.update();
-  Display::update();
-  if(Input::controller.get_digital(DIGITAL_X) && Input::controller.get_digital(DIGITAL_A)){
-    stop();
+  if(!pros::competition::is_autonomous()){
+    if(Input::controller.get_digital(DIGITAL_X) && Input::controller.get_digital(DIGITAL_A)){
+      stop();
+    }
   }
 
   pros::delay(10);

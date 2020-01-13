@@ -11,7 +11,7 @@ namespace Intake {
   const int STOP_POWER = 0;
   const int INTAKE_POWER = 110;
   const int GRAB_STACK_POWER = 70;
-  const int HOLD_POWER = 40;
+  const int HOLD_POWER = 30;
   const int OUTTAKE_POWER = -70;
   const int STACK_OUTTAKE_POWER = -100;
 

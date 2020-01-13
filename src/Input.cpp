@@ -32,24 +32,27 @@ LiftTilt::State Input::getLiftTiltState(void){
     return LiftTilt::CALIBRATE;
   }
 
-  if(topDpad){
-    return LiftTilt::HIGH_INTAKE;
-  }
-
-  if(botDpad){
-    return LiftTilt::BOT_INTAKE;
-  }
-
-  if(leftDpad){
-    return LiftTilt::MID_INTAKE;
-  }
-
-  if(rightDpad){
-    if(liftTiltState == LiftTilt::DROP_STACK){
-      return LiftTilt::ALMOST_STACK;
+  //if(!dPadBtn){
+    if(topDpad){
+      return LiftTilt::HIGH_INTAKE;
     }
-    return LiftTilt::DROP_STACK;
-  }
+
+    if(botDpad){
+      return LiftTilt::BOT_INTAKE;
+    }
+
+    if(leftDpad){
+      return LiftTilt::MID_INTAKE;
+    }
+
+    if(rightDpad){
+      switch(liftTiltState){
+        //case LiftTilt::DROP_STACK: return LiftTilt::ALMOST_STACK;
+        default: return LiftTilt::DROP_STACK;
+      }
+    }
+  //}
+  dPadBtn = rightDpad || leftDpad || topDpad || botDpad;
 
 
 

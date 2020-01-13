@@ -240,6 +240,7 @@ void autonomous() {
 	//Poller poller = Robot::liftTilt.setState(LiftTilt::CALIBRATE);
 	//Robot::wait(&poller);
 	while(true){
+		/*
 		Vector robot;
 		robot.a = 0;
 		robot.y = 0;
@@ -253,19 +254,20 @@ void autonomous() {
 		Line line;
 		line.a = a;
 		line.b = b;
-
+		*/
 
 		if(Input::controller.get_digital(DIGITAL_X) && Input::controller.get_digital(DIGITAL_B)){
 				Atn::runAuton();
 		}
 
 		if(Input::controller.get_digital(DIGITAL_B)){
-			
+			Atn::dropStack();
 		}
+		Robot::intake.setState(Input::getIntakeState());
 
 		Robot::liftTilt.setState(Input::getLiftTiltState());
 
-		Robot::intake.setState(Input::getIntakeState());
+
 
 		Robot::drive.move(Input::getleftDrive(), Input::getRightDrive());
 		Robot::handle();

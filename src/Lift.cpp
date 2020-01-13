@@ -21,12 +21,12 @@ void Lift::Machine::setState(State state){
   this->state = state;
   switch(state){
     case CALIBRATE: calibrate(); return;
-    case STOP: poller = liftMotors->move(0); return;
+    case STOP: movePower(0); return;
     case GRAB_STACK: grabStack(); return;
     case LIFT_POWER: movePower(Input::getLiftPower()); return;
     case INTAKE: holdPower = INTAKE_HOLD_POWER; break;
-    case TILT_POWER: poller = Poller(); return;
-    case DROP_STACK: poller = liftMotors->move(0); return;
+    case TILT_POWER: movePower(0); return;
+    case DROP_STACK: movePower(DROP_STACK_HOLD_POWER); return;
     default: break;
   }
   double pos = stateToPos(state);

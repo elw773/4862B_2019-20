@@ -1,6 +1,17 @@
 #include "main.h"
 
 
+void PosTrack::PosTracker::reset(void){
+  startAngle += getAngle();
+  currCondition.robotVector.x = 0;
+  currCondition.robotVector.y = 0;
+  currCondition.robotVector.a = 0;
+  currCondition.straightDist = 0;
+  currCondition.sidewaysDist = 0;
+  straightEnc.reset();
+  sidewaysEnc.reset();
+}
+
 PosTrack::PosTracker::PosTracker( int straightEncPort1, int straightEncPort2, bool straightReversed,
             int sidewaysEncPort1, int sidewaysEncPort2, bool sidewaysReversed,
             int imuPort,
@@ -105,7 +116,7 @@ void addPolarToVector(Vector* Vector, Polar polar){
 };
 
 double PosTrack::PosTracker::getAngle(void){
-  return Robot::drive.getAngle() * 0.0174532925;
+  return degreeToRad(Robot::drive.getAngle()) - startAngle;
 };
 
 double calcDist(Vector a, Vector b){

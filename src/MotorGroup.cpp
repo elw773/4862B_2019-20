@@ -24,6 +24,10 @@ Poller MotorGroup::movePosition(double position, int velocity, double range){
   return Poller(std::bind(&MotorGroup::getPosition, this), position, range);
 };
 
+double MotorGroup::getVoltage(void){
+  return (this->motors.at(0)->get_voltage() / 12000) * 127;
+}
+
 Poller MotorGroup::moveVelocity(int velocity, int range){
   for(pros::Motor* motor:this->motors){
     motor->move_velocity(velocity);

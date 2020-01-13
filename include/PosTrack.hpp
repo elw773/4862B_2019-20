@@ -45,6 +45,8 @@ namespace PosTrack{
 
     Vector velocity;
     long lastTime;
+
+    double startAngle;
   public:
     PosTracker( int straightEncPort1, int straightEncPort2, bool straightReversed,
                 int sidewaysEncPort1, int sidewaysEncPort2, bool sidewaysReversed,
@@ -54,6 +56,8 @@ namespace PosTrack{
                 double straightTicksToInches,
                 double sidewaysTicsToInches
               );
+
+    void reset(void);
 
     double getAngle(void); // returns the angle of the robot in radians
 

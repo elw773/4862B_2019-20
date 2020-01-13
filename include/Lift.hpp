@@ -15,7 +15,7 @@ namespace Lift {
   const int DROP_STACK_HOLD_POWER = -5;
   const int INTAKE_HOLD_POWER = 0;
 
-  const double PRE_TWO_GRAB_POS = 700;
+  const double PRE_TWO_GRAB_POS = 300;
   const double LOW_TOWER_POS = 1700;
   const double MID_TOWER_POS = 2300;
   const double INTAKE_POS = 0;

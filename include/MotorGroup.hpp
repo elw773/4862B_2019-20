@@ -27,6 +27,8 @@ public:
 
   double getPosition(void);
 
+  double getVoltage(void);
+
   int getTargetVelocity(void);
 
   int getVelocity(void);

@@ -24,7 +24,7 @@ void Tilt::Machine::setState(State state){
 
   switch(state){
     case CALIBRATE: calibrate(); break;
-    case STOP: poller = tiltMotors->move(0); break;
+    case STOP: movePower(0); break;
     case DROP_STACK: dropStack(); break;
     case LIFT_POWER: poller = Poller(); break;
     case TILT_POWER: movePower(Input::getLiftPower()); break;
@@ -51,7 +51,7 @@ void Tilt::Machine::calibrate(void){
   this->state = CALIBRATE;
 
   this->currentState = [this](void){
-    tiltMotors->move(-25);
+    tiltMotors->move(-17);
     if(tiltMotors->getVelocity() == 0){
       tiltMotors->setZeroPosition();
     }
@@ -73,8 +73,8 @@ void Tilt::Machine::dropStack(void){
       //tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND);
       double error = DROP_STACK_POS - tiltMotors->getPosition();
       if(error > DEADBAND){
-        // previously 0.037
-        int velocity = (int)(error * 0.04);
+        // previously 0.037, 0.047e
+        int velocity = (int)(error * 0.05);
         if(velocity > SLOW_VELOCITY){
           velocity = velocity;
         }

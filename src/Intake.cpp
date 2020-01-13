@@ -6,10 +6,10 @@ Intake::Machine::Machine(MotorGroup* intakeMotors){
 
 void Intake::Machine::setState(State state){
   if(state == State::PREP_CUBE || state == State::OUTTAKE_CUBE){
-    int goal = intakeMotors->getPosition() - (state==State::PREP_CUBE?500:2000);
+    int goal = intakeMotors->getPosition() - (state==State::PREP_CUBE?400:1500);
     poller = Poller(false);
     this->currentState = [goal, this](void){
-      intakeMotors->movePosition(goal, 200);
+      intakeMotors->movePosition(goal, 100);
       if(abs(goal - intakeMotors->getPosition()) < 100){
         poller.setPoller(true);
       }
