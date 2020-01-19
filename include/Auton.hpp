@@ -8,6 +8,7 @@ namespace Atn {
   const bool BLUE = false;
 
   extern int selectedAuton;
+  extern bool deployed;
 
   void nextAuton(void);
   void prevAuton(void);
@@ -25,6 +26,8 @@ namespace Atn {
   };
 
   void dropStack(void);
+
+  void deploy(void);
 
   extern std::vector<Auton*> autons;
 };

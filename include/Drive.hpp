@@ -40,6 +40,8 @@ namespace Drive {
   public:
     void reset(void);
 
+    void calibrate(void);
+
     Poller* getPoller(void);
 
     Machine(MotorGroup* leftMotors, MotorGroup* rightMotors, PosTrack::PosTracker* posTracker);

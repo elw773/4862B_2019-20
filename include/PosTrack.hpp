@@ -47,6 +47,7 @@ namespace PosTrack{
     long lastTime;
 
     double startAngle;
+    pros::Imu imu;
   public:
     PosTracker( int straightEncPort1, int straightEncPort2, bool straightReversed,
                 int sidewaysEncPort1, int sidewaysEncPort2, bool sidewaysReversed,

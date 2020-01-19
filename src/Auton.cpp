@@ -3,6 +3,7 @@
 using namespace Robot;
 
 int Atn::selectedAuton = 0;
+bool Atn::deployed = false;
 
 Atn::Auton::Auton(std::function<void(bool)> func, std::string name){
   this->func = func;
@@ -38,6 +39,15 @@ void Atn::runAuton(void){
   autons.at(selectedAuton)->run(true);
 };
 
+void Atn::deploy(void){
+  Poller* liftTiltPoller = liftTilt.getPoller();
+  liftTilt.setState(LiftTilt::DEPLOY);
+  wait(liftTiltPoller);
+  liftTilt.setState(LiftTilt::BOT_INTAKE);
+
+  deployed = true;
+}
+
 void Atn::dropStack(void){
   Poller* drivePoller = drive.getPoller();
   Poller* liftTiltPoller = liftTilt.getPoller();
@@ -64,9 +74,8 @@ Atn::Auton redSmall5(
     Poller* liftTiltPoller = liftTilt.getPoller();
 
     intake.setState(Intake::INTAKE);
-    liftTilt.setState(LiftTilt::DEPLOY);
-    wait(liftTiltPoller);
-    liftTilt.setState(LiftTilt::BOT_INTAKE);
+
+    Atn::deploy();
 
     drive.moveDistance(32, 170,Drive::DEF_RANGE,0);
 
@@ -106,9 +115,7 @@ Atn::Auton blueSmall5(
     Poller* liftTiltPoller = liftTilt.getPoller();
 
     intake.setState(Intake::INTAKE);
-    liftTilt.setState(LiftTilt::DEPLOY);
-    wait(liftTiltPoller);
-    liftTilt.setState(LiftTilt::BOT_INTAKE);
+    Atn::deploy();
 
     drive.moveDistance(32, 170,Drive::DEF_RANGE,0);
 
@@ -147,9 +154,7 @@ Atn::Auton redLargeZn(
     Poller* liftTiltPoller = liftTilt.getPoller();
 
     intake.setState(Intake::INTAKE);
-    liftTilt.setState(LiftTilt::DEPLOY);
-    wait(liftTiltPoller);
-    liftTilt.setState(LiftTilt::BOT_INTAKE);
+    Atn::deploy();
 
     drive.moveDistance(21,170,Drive::DEF_RANGE,0);
     intake.setState(Intake::INTAKE);
@@ -182,9 +187,7 @@ Atn::Auton blueLargeZn(
     Poller* liftTiltPoller = liftTilt.getPoller();
 
     intake.setState(Intake::INTAKE);
-    liftTilt.setState(LiftTilt::DEPLOY);
-    wait(liftTiltPoller);
-    liftTilt.setState(LiftTilt::BOT_INTAKE);
+    Atn::deploy();
 
     drive.moveDistance(21,170,Drive::DEF_RANGE,0);
     intake.setState(Intake::INTAKE);
@@ -217,9 +220,7 @@ Atn::Auton noDrop(
     Poller* liftTiltPoller = liftTilt.getPoller();
 
     intake.setState(Intake::INTAKE);
-    liftTilt.setState(LiftTilt::DEPLOY);
-    wait(liftTiltPoller);
-    liftTilt.setState(LiftTilt::BOT_INTAKE);
+    Atn::deploy();
 
     drive.moveDistance(30,170,Drive::DEF_RANGE,0);
 

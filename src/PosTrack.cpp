@@ -1,6 +1,16 @@
 #include "main.h"
 
 
+void PosTrack::PosTracker::calibrate(void){
+  int iter = 0;
+  while (imu.is_calibrating()) {
+    Display::update();
+		pros::lcd::print(4, "IMU is calibrating (%u)", iter);
+    pros::delay(10);
+		iter += 10;
+	}
+};
+
 void PosTrack::PosTracker::reset(void){
   startAngle += getAngle();
   currCondition.robotVector.x = 0;
@@ -19,7 +29,7 @@ PosTrack::PosTracker::PosTracker( int straightEncPort1, int straightEncPort2, bo
             double sidewaysWheelOffset,
             double straightTicksToInches,
             double sidewaysTicsToInches
-          ) :  straightEnc (straightEncPort1, straightEncPort2, straightReversed),  sidewaysEnc (sidewaysEncPort1, sidewaysEncPort2, sidewaysReversed)//, imu(imuPort)
+          ) :  straightEnc (straightEncPort1, straightEncPort2, straightReversed),  sidewaysEnc (sidewaysEncPort1, sidewaysEncPort2, sidewaysReversed), imu(imuPort)
 {
   this->straightWheelOffset = straightWheelOffset;
   this->sidewaysWheelOffset = sidewaysWheelOffset;
@@ -116,7 +126,7 @@ void addPolarToVector(Vector* Vector, Polar polar){
 };
 
 double PosTrack::PosTracker::getAngle(void){
-  return degreeToRad(Robot::drive.getAngle()) - startAngle;
+  return degreeToRad(imu.get_yaw()) - startAngle; //degreeToRad(Robot::drive.getAngle()) - startAngle;
 };
 
 double calcDist(Vector a, Vector b){

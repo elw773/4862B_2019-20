@@ -10,6 +10,10 @@ const double noTurnDist = 7;
 const double decelK = 2;
 const double decelKa = degreeToRad(10);
 
+void Drive::Machine::calibrate(void){
+  posTracker->calibrate();
+};
+
 void Drive::Machine::reset(void){
   leftMotors->setZeroPosition();
   rightMotors->setZeroPosition();

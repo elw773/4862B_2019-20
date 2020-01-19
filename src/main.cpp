@@ -14,6 +14,7 @@ int LIFT_DOWN = 100;
  */
 void initialize() {
 	Display::init();
+	Robot::drive.calibrate();
 }
 
 /**
@@ -239,6 +240,10 @@ void autonomous() {
 	//Robot::drive.move(0,0);
 	//Poller poller = Robot::liftTilt.setState(LiftTilt::CALIBRATE);
 	//Robot::wait(&poller);
+	if(Input::getIntakeState() == Intake::INTAKE && !Atn::deployed){
+		Atn::deploy();
+	}
+
 	while(true){
 		/*
 		Vector robot;
