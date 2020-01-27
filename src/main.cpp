@@ -243,8 +243,10 @@ void autonomous() {
 	if(Input::getIntakeState() == Intake::INTAKE && !Atn::deployed){
 		Atn::deploy();
 	}
+	bool rerun = false;
 
 	while(true){
+
 		/*
 		Vector robot;
 		robot.a = 0;
@@ -260,7 +262,17 @@ void autonomous() {
 		line.a = a;
 		line.b = b;
 		*/
+		if(rerun){
+			Atn::recordRerun();
+		}
 
+		if(Input::controller.get_digital(DIGITAL_A)){
+			rerun = true;
+			Atn::deploy();
+		}
+		if(Input::controller.get_digital(DIGITAL_X)){
+			rerun = false;
+		}
 		if(Input::controller.get_digital(DIGITAL_X) && Input::controller.get_digital(DIGITAL_B)){
 				Atn::runAuton();
 		}

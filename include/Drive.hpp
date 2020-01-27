@@ -48,7 +48,7 @@ namespace Drive {
 
     void move(int left, int right);
 
-    void slewVelocity(int left, int right);
+    void slewVelocity(int left, int right, int slew = 3);
 
     void moveDistance(double distance, int velocity, double range = 0.5, int timeout = 0);
 

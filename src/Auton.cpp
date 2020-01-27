@@ -4,6 +4,7 @@ using namespace Robot;
 
 int Atn::selectedAuton = 0;
 bool Atn::deployed = false;
+int Atn::lastRerunTime = 0;
 
 Atn::Auton::Auton(std::function<void(bool)> func, std::string name){
   this->func = func;
@@ -291,3 +292,18 @@ Atn::Auton blueLargeNoDrop(
 );
 */
 std::vector<Atn::Auton*> Atn::autons = {&redSmall5, &blueSmall5, &redLargeZn, &blueLargeZn, &noDrop};
+
+
+void Atn::recordRerun(void){
+  int delay = lastRerunTime - pros::millis();
+  lastRerunTime = pros::millis();
+  printf("Atn::handleRerun(%d, %d, %d, %d, %d)\n", Robot::leftMotorGroup.getVelocity(), Robot::rightMotorGroup.getVelocity(), Robot::liftTilt.getState(), Robot::intake.getState(), delay);
+};
+
+void Atn::handleRerun(int leftVel, int rightVel, int liftTiltState, int intakeState, int delay){
+  pros::delay(delay);
+  Robot::drive.slewVelocity(leftVel, rightVel, 600);
+  Robot::liftTilt.setState(static_cast<LiftTilt::State>(liftTiltState));
+  Robot::intake.setState(static_cast<Intake::State>(intakeState));
+  Robot::handle();
+};
