@@ -9,7 +9,7 @@ pros::Motor leftMotor1(1, GEARSET_600_RPM, true);
 pros::Motor leftMotor2(19, GEARSET_600_RPM, true);
 pros::Motor rightMotor1(2,GEARSET_600_RPM, false);
 pros::Motor rightMotor2(3, GEARSET_600_RPM, false);
-pros::Motor tiltMotor(9, GEARSET_100_RPM, false);
+pros::Motor tiltMotor(9, GEARSET_100_RPM, true);
 pros::Motor liftMotor(8, GEARSET_100_RPM, false);
 pros::Motor intakeMotor1(13, GEARSET_200_RPM, false);
 pros::Motor intakeMotor2(17, GEARSET_200_RPM, true);
@@ -39,7 +39,7 @@ int sidewaysEncPort2 = 6;
 bool sidewaysReversed = false;
 int imuPort = 20;
 double straightWheelOffset = -1.5;
-double sidewaysWheelOffset = 0;
+double sidewaysWheelOffset = 10;
 double straightTicksToInches = 100.0/4085.0;
 double sidewaysTicsToInches = 100.0/4085.0;
 

@@ -75,11 +75,11 @@ void Drive::Machine::moveAngleDeg(double angle, int velocity, double range, int 
 };
 
 
-void Drive::Machine::slewVelocity(int left, int right){
-  int leftVelDelta = limit(left - leftMotors->getTargetVelocity(), 3);
+void Drive::Machine::slewVelocity(int left, int right, int slew){
+  int leftVelDelta = limit(left - leftMotors->getTargetVelocity(), slew);
   leftMotors->moveVelocity(leftMotors->getTargetVelocity() + leftVelDelta);
 
-  int rightVelDelta = limit(right - rightMotors->getTargetVelocity(), 3);
+  int rightVelDelta = limit(right - rightMotors->getTargetVelocity(), slew);
   rightMotors->moveVelocity(rightMotors->getTargetVelocity() + rightVelDelta);
 };
 

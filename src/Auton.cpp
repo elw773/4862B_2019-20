@@ -4,6 +4,7 @@ using namespace Robot;
 
 int Atn::selectedAuton = 0;
 bool Atn::deployed = false;
+int Atn::lastRerunTime = 0;
 
 Atn::Auton::Auton(std::function<void(bool)> func, std::string name){
   this->func = func;
@@ -12,6 +13,7 @@ Atn::Auton::Auton(std::function<void(bool)> func, std::string name){
 
 void Atn::Auton::run(bool side){
   this->func(side);
+  Robot::stop();
 };
 std::string Atn::Auton::getName(void){
   return name;
@@ -57,12 +59,17 @@ void Atn::dropStack(void){
   drive.move(0,0);
 
   liftTilt.setState(LiftTilt::DROP_STACK);
+  intake.setState(Intake::PREP_STACK);
+  wait(liftTiltPoller);
+  /*
   timer = Poller(500);
   wait(&timer);
   intake.setState(Intake::STOP);
 
   timer = Poller(4600);
   wait(&timer);
+  intake.setState(Intake::STACK_OUTTAKE);
+  */
   intake.setState(Intake::STACK_OUTTAKE);
   drive.moveDistance(-7,80);
   wait(drivePoller);
@@ -291,3 +298,18 @@ Atn::Auton blueLargeNoDrop(
 );
 */
 std::vector<Atn::Auton*> Atn::autons = {&redSmall5, &blueSmall5, &redLargeZn, &blueLargeZn, &noDrop};
+
+
+void Atn::recordRerun(void){
+  int delay = lastRerunTime - pros::millis();
+  lastRerunTime = pros::millis();
+  printf("Atn::handleRerun(%d, %d, %d, %d, %d)\n", Robot::leftMotorGroup.getVelocity(), Robot::rightMotorGroup.getVelocity(), Robot::liftTilt.getState(), Robot::intake.getState(), delay);
+};
+
+void Atn::handleRerun(int leftVel, int rightVel, int liftTiltState, int intakeState, int delay){
+  pros::delay(delay);
+  Robot::drive.slewVelocity(leftVel, rightVel, 600);
+  Robot::liftTilt.setState(static_cast<LiftTilt::State>(liftTiltState));
+  Robot::intake.setState(static_cast<Intake::State>(intakeState));
+  Robot::handle();
+};

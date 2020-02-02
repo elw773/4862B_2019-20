@@ -15,11 +15,11 @@ namespace Tilt{
   const double SLOW_POS = 1500;
   const int BOT_HOLD_POWER = 0;
 
-  const double TOWER_POS = 1500;
+  const double TOWER_POS = 0;
   const double BOT_INTAKE_POS = 0;
-  const double MID_INTAKE_POS = 2000;
-  const double HIGH_INTAKE_POS = 4400;
-  const double DROP_STACK_POS = 9000;
+  const double MID_INTAKE_POS = 600;
+  const double HIGH_INTAKE_POS = 1500;
+  const double DROP_STACK_POS = 3950;
   const double ALMOST_STACK_POS = 8000;
 
   enum State {

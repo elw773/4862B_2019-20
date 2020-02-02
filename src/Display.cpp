@@ -27,10 +27,11 @@ void Display::update(void){
 
   pros::lcd::print(0, "%s Loop: %d", Atn::getSelectedAutonName().c_str(), Robot::handleLoopTime);
   pros::lcd::print(1, "liftTilt State: %d", Robot::liftTilt.getState());
-  pros::lcd::print(2, "Lift P:%f S:%d V:%3f", Robot::liftMotorGroup.getPosition(), Robot::lift.getState(), Robot::liftMotorGroup.getVoltage());
-  pros::lcd::print(3, "Tilt P:%f S:%d V:%3f", Robot::tiltMotorGroup.getPosition(), Robot::tilt.getState(), Robot::tiltMotorGroup.getVoltage());
+  pros::lcd::print(2, "Lift P:%5f S:%2d V:%4f", Robot::liftMotorGroup.getPosition(), Robot::lift.getState(), Robot::liftMotorGroup.getVoltage());
+  pros::lcd::print(3, "Tilt P:%5f S:%2d V:%4f", Robot::tiltMotorGroup.getPosition(), Robot::tilt.getState(), Robot::tiltMotorGroup.getVoltage());
   pros::lcd::print(4, "Angle: %5f ( %5f )", Robot::posTracker.getAngle(), radToDegree(Robot::posTracker.getAngle()));
-  pros::lcd::print(5, "X:%5f Y: %5f", Robot::posTracker.getVector()->x,  Robot::posTracker.getVector()->y);
-  pros::lcd::print(6, "clipTest: %5f, %5f", clipAngle(degreeToRad(380)), clipAngle(degreeToRad(-270)));
+  pros::lcd::print(5, "X:%5f Y:%5f", Robot::posTracker.getVector()->x,  Robot::posTracker.getVector()->y);
+  pros::lcd::print(6, "T:%f I:%f D:%f", Robot::tiltMotorGroup.getStress(), Robot::intakeMotorGroup.getStress(), (Robot::leftMotorGroup.getStress() + Robot::rightMotorGroup.getStress()) / 2.0);
+  pros::lcd::print(7, "clipTest: %5f, %5f", clipAngle(degreeToRad(380)), clipAngle(degreeToRad(-270)));
   //pros::lcd::print(7, "Intake State: %d", Robot::intake.getState());
 };

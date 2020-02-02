@@ -17,6 +17,12 @@ Poller MotorGroup::move(int power){
   return Poller();
 };
 
+double MotorGroup::getStress(void){
+  int efficiency = this->motors.at(0)->get_efficiency();
+  int current =  this->motors.at(0)->get_current_draw();
+  return current/(double)efficiency;
+};
+
 Poller MotorGroup::movePosition(double position, int velocity, double range){
   for(pros::Motor* motor:this->motors){
     motor->move_absolute(position, velocity);
@@ -25,7 +31,7 @@ Poller MotorGroup::movePosition(double position, int velocity, double range){
 };
 
 double MotorGroup::getVoltage(void){
-  return (this->motors.at(0)->get_voltage() / 12000) * 127;
+  return (this->motors.at(0)->get_voltage() / 12000.0) * 127.0;
 }
 
 Poller MotorGroup::moveVelocity(int velocity, int range){
