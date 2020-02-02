@@ -23,10 +23,10 @@ void Lift::Machine::setState(State state){
     case CALIBRATE: calibrate(); return;
     case STOP: movePower(0); return;
     case GRAB_STACK: grabStack(); return;
-    case LIFT_POWER: movePower(Input::getLiftPower()); return;
+    case LIFT_POWER: movePower(Input::getLiftPower()); holdPower = INTAKE_HOLD_POWER; return;
     case INTAKE: holdPower = INTAKE_HOLD_POWER; break;
     case TILT_POWER: movePower(0); return;
-    case DROP_STACK: movePower(DROP_STACK_HOLD_POWER); return;
+    case DROP_STACK: movePower(DROP_STACK_HOLD_POWER); holdPower = DROP_STACK_HOLD_POWER; return;
     default: break;
   }
   double pos = stateToPos(state);
@@ -59,6 +59,7 @@ void Lift::Machine::calibrate(void){
 };
 
 void Lift::Machine::movePower(int power){
+  holdPower = power;
   state = LIFT_POWER;
   this->currentState = [this, power](void){
     liftMotors->move(power);

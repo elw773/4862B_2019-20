@@ -29,6 +29,8 @@ public:
 
   double getVoltage(void);
 
+  double getStress(void);
+
   int getTargetVelocity(void);
 
   int getVelocity(void);

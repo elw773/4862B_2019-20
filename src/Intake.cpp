@@ -5,8 +5,14 @@ Intake::Machine::Machine(MotorGroup* intakeMotors){
 };
 
 void Intake::Machine::setState(State state){
-  if(state == State::PREP_CUBE || state == State::OUTTAKE_CUBE){
-    int goal = intakeMotors->getPosition() - (state==State::PREP_CUBE?400:1500);
+  if(state == State::PREP_CUBE || state == State::OUTTAKE_CUBE || state == State::PREP_STACK){
+    int delta = 0;
+    switch(state){
+      case PREP_CUBE: delta = 400; break;
+      case OUTTAKE_CUBE: delta = 1500; break;
+      case PREP_STACK: delta = 1000; break;
+    }
+    int goal = intakeMotors->getPosition() - delta;
     poller = Poller(false);
     this->currentState = [goal, this](void){
       intakeMotors->movePosition(goal, 100);

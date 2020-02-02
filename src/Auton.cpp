@@ -13,6 +13,7 @@ Atn::Auton::Auton(std::function<void(bool)> func, std::string name){
 
 void Atn::Auton::run(bool side){
   this->func(side);
+  Robot::stop();
 };
 std::string Atn::Auton::getName(void){
   return name;
@@ -58,12 +59,17 @@ void Atn::dropStack(void){
   drive.move(0,0);
 
   liftTilt.setState(LiftTilt::DROP_STACK);
+  intake.setState(Intake::PREP_STACK);
+  wait(liftTiltPoller);
+  /*
   timer = Poller(500);
   wait(&timer);
   intake.setState(Intake::STOP);
 
   timer = Poller(4600);
   wait(&timer);
+  intake.setState(Intake::STACK_OUTTAKE);
+  */
   intake.setState(Intake::STACK_OUTTAKE);
   drive.moveDistance(-7,80);
   wait(drivePoller);

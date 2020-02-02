@@ -21,6 +21,9 @@ Tilt::Machine::Machine(MotorGroup* tiltMotors){
 
 void Tilt::Machine::setState(State state){
   this->state = state;
+  if(state == State::TOWER){
+    state = State::BOT_INTAKE;
+  }
 
   switch(state){
     case CALIBRATE: calibrate(); break;
@@ -88,8 +91,8 @@ void Tilt::Machine::dropStack(void){
 };
 
 void Tilt::Machine::handle(void){
-  if(tiltMotors->getPosition() < BOT_INTAKE_POS + DEADBAND + CALIBRATE_OFFSET && state == BOT_INTAKE && state != CALIBRATE){
-    tiltMotors->move(BOT_HOLD_POWER);
+  if(tiltMotors->getPosition() < 150 && state == BOT_INTAKE && state != CALIBRATE){
+    tiltMotors->move(0);
   }/* else if(tiltMotors->getPosition() > SLOW_POS && state == DROP_STACK){ // if is moving up and it it in slow zone
     tiltMotors->movePosition(DROP_STACK_POS, SLOW_VELOCITY, DEADBAND); // go where you were going, but slower now
   }*/ else {
